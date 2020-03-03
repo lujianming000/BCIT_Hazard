@@ -1,30 +1,50 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>BCIT Biking</title>
-    </head>
 
-    <body>
-        <h1>
-            This is the landing page for our BCIT biking project!
-        </h1>
-        <h4>
-            Hi, from Jason Hok Kan Cheung! This is my second edit to the same line.
-            I removed two lines of text under here!
-        </h4>
-        <h4>
-            Hi, from Sam Shannon!
-            bye world!
-            heiheihei
-        </h4>
-        <h4>
-            Hi, from Jimmy Lu!
-            test12345667777
-            ssssss
-        </h4>
-        <br>
-        <a href="index.html">Index</a>
-        <a href="main.html">Main</a>
-        <a href="map.html">Map</a>
-    </body>
+<head>
+    <title>BCIT Biking</title>
+    <style>
+        #map{
+            background-image: url(images/map.png);
+            background-repeat: no-repeat;
+        }
+        #button{
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            right: 10vw;
+            bottom: 10vh;
+        }
+
+    </style>
+</head>
+
+<body id="map">
+    <img id="button" src="images/button.png">
+
+    <h1>
+        This is the landing page for our BCIT biking project!
+    </h1>
+    <br>
+    <a href="index.html">Index</a>
+    <br>
+    <a href="main.html">Main</a>
+    <br>
+    <a href="map.html">Map</a>
+
+    <script>
+        let width = window.innerWidth ||
+            document.documentElement.clientWidth ||
+            document.body.clientWidth;
+        let height = window.innerHeight ||
+            document.documentElement.clientHeight ||
+            document.body.clientHeight;
+        let i = width;
+        let j = height;
+        document.getElementById("map").style.width = i + 'px';
+        document.getElementById("map").style.height = i + 'px';
+
+    </script>
+</body>
+
 </html>
