@@ -4,27 +4,26 @@
 <head>
     <title>BCIT Biking</title>
     <style>
-        #map{
+        #map {
             background-image: url(images/map.png);
             background-repeat: no-repeat;
+            background-size: 100vw 100vh;
+            overflow: hidden;
         }
-        #button{
-            position: absolute;
+
+        #button {
+            position: fixed;
             width: 100px;
             height: 100px;
             right: 10vw;
             bottom: 10vh;
         }
-
     </style>
 </head>
 
 <body id="map">
     <img id="button" src="images/button.png">
 
-    <h1>
-        This is the landing page for our BCIT biking project!
-    </h1>
     <br>
     <a href="index.html">Index</a>
     <br>
@@ -43,7 +42,6 @@
         let j = height;
         document.getElementById("map").style.width = i + 'px';
         document.getElementById("map").style.height = i + 'px';
-
     </script>
 </body>
 
