@@ -3,46 +3,30 @@
 
 <head>
     <title>BCIT Biking</title>
-    <style>
-        #map {
-            background-image: url(images/map.png);
-            background-repeat: no-repeat;
-            background-size: 100vw 100vh;
-            overflow: hidden;
-        }
-
-        #button {
-            position: fixed;
-            width: 100px;
-            height: 100px;
-            right: 10vw;
-            bottom: 10vh;
-        }
-    </style>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 </head>
 
-<body id="map">
-    <img id="button" src="images/button.png">
-
-    <br>
-    <a href="index.html">Index</a>
-    <br>
-    <a href="main.html">Main</a>
-    <br>
-    <a href="map.html">Map</a>
-
-    <script>
-        let width = window.innerWidth ||
-            document.documentElement.clientWidth ||
-            document.body.clientWidth;
-        let height = window.innerHeight ||
-            document.documentElement.clientHeight ||
-            document.body.clientHeight;
-        let i = width;
-        let j = height;
-        document.getElementById("map").style.width = i + 'px';
-        document.getElementById("map").style.height = i + 'px';
-    </script>
+<body>
+    <div style="position:absolute;left:20px;top:20px">
+        <form action="/action_page.php">
+            <div class="form-group">
+                <label for="email">Email address:</label>
+                <input type="email" class="form-control" placeholder="Enter email" id="email">
+            </div>
+            <div class="form-group">
+                <label for="pwd">Password:</label>
+                <input type="password" class="form-control" placeholder="Enter password" id="pwd">
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox"> Remember me
+                </label>
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 </body>
 
 </html>
