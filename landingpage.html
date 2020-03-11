@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Landing Page</title>
+    <style>
+        /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+        #map {
+            height: 100%;
+        }
+
+        /* Optional: Makes the sample page fill the window. */
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        .btn-circle.btn-xl {
+            width: 70px;
+            height: 70px;
+            padding: 10px 16px;
+            border-radius: 35px;
+            font-size: 12px;
+            text-align: center;
+            position: fixed;
+            background-color: #ED553B;
+            border-color: #ED552A;
+            color: white;
+            font-family: Arial, Helvetica, sans-serif;
+            visibility: hidden;
+        }
+
+        #report-btn {
+            left: 90vw;
+            top: 80vh;
+        }
+
+        #delete-btn {
+            left: 90vw;
+            top: 80vh;
+        }
+
+
+        #snow {
+            width: 50px;
+            height: 50px;
+        }
+
+        .navbar-light {
+            color: white;
+        }
+
+        .bg-light {
+            color: tomato;
+        }
+    </style>
+
+
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKkBykAi2chLQNlT8yHC1fmcIGCiPTwT8"></script>
+
+    <script>
+        // In the following example, markers appear when the user clicks on the map.
+        // Each marker is labeled with a single alphabetical character.
+        var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        var labelIndex = 0;
+        var customStyle = [{
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{
+                visibility: "off"
+            }]
+        }];
+
+        var markers = [];
+        var uniqueId = 1;
+
+        let reportButtonClicked = false;
+
+        function initialize() {
+            var BCIT = {
+                lat: 49.2482,
+                lng: -123
+            };
+            var BCIT_BOUNDS = {
+                north: 49.255864,
+                south: 49.241061,
+                west: -123.004939,
+                east: -122.995592
+            };
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 17,
+                minZoom: 15.8,
+                center: BCIT,
+                restriction: {
+                    latLngBounds: BCIT_BOUNDS,
+                    strictBounds: false
+                }
+            });
+
+            document.getElementById("report-btn").onclick = reportClicked;
+
+            // This event listener calls addMarker() when the map is clicked.
+            google.maps.event.addListener(map, 'click', function (event) {
+                addMarker(event.latLng, map);
+            });
+            map.set("styles", customStyle)
+        }
+
+
+        // Report Hazard "Page"
+        function reportClicked() {
+            reportButtonClicked = true;
+        }
+
+        // Adds a marker to the map.
+        function addMarker(location, map) {
+            if (!reportButtonClicked) {
+                return
+            }
+
+
+            // Add the marker at the clicked location, and add the next-available label
+            // from the array of alphabetical characters.
+            var icon1 =
+                'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+            var marker = new google.maps.Marker({
+                position: location,
+                label: labels[labelIndex++ % labels.length],
+                map: map,
+                icon: icon1,
+                animation: google.maps.Animation.DROP,
+            });
+
+            //activate popup window
+            $("#reporthazard").modal();
+
+            $("#button1").click(function () {
+                $("#reporthazard").modal("hide");
+            });
+
+
+            //Attach click event handler to the marker.
+            google.maps.event.addListener(marker, "click", function (e) {
+                var content = '<img id="Snow" src="images/snow.png">';
+                content += "<br /><input type = 'button' value = 'Delete' onclick = 'DeleteMarker(" + marker
+                    .id +
+                    ");' value = 'Delete' />";
+
+                var InfoWindow = new google.maps.InfoWindow({
+                    content: content
+                });
+                InfoWindow.open(map, marker);
+            });
+
+            //Set unique id
+            marker.id = uniqueId;
+            uniqueId++;
+            markers.push(marker);
+
+            reportButtonClicked = false;
+        }
+
+
+
+        function DeleteMarker(id) {
+            //Find and remove the marker from the Array
+            for (var i = 0; i < markers.length; i++) {
+                if (markers[i].id == id) {
+                    //Remove the marker from Map                  
+                    markers[i].setMap(null);
+
+                    //Remove the marker from array.
+                    markers.splice(i, 1);
+                    return;
+                }
+            }
+        };
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+
+</head>
+
+<body>
+    <!--Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">BCIT Biking</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+      
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+              <a class="nav-link" href="#">Sign in</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Home</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Hazard
+              </a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                <a class="dropdown-item" href="#">Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item" href="#">Something else here</a>
+              </div>
+            </li>
+          </ul>
+          <form class="form-inline my-2 my-lg-0">
+            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+          </form>
+        </div>
+      </nav>
+    <!--/.Navbar -->
+
+    <div id="map"></div>
+    <button type="button" id="report-btn" class="btn btn-danger btn-circle btn-xl">Report</button>
+
+
+    <!-- popup window-->
+    <div class="modal fade" id="reporthazard">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Hazard Information</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+
+                <!-- Modal body -->
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="hazardType">Hazard Type</label>
+                        <select class="form-control" id="hazardType">
+                            <option value="snow">Snow</option>
+                            <option value="pothole">Pothole</option>
+                            <option value="construction">Construction</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+
+                    <form>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">Hazard Description</label>
+                            <textarea class="form-control" id="message-text"></textarea>
+                        </div>
+                    </form>
+
+                    <div>
+                        <label for="photoInput">Upload a Photo</label>
+                        <input type="file" class="form-control-file" id="photoInput">
+                    </div>
+
+                </div>
+
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="button1">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- popup window -->
+
+
+
+
+
+
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <!-- popup window-->
+
+
+
+
+</body>
+
+</html>
