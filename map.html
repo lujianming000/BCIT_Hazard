@@ -38,13 +38,59 @@
             top: 85vh;
         }
 
-        #snow {
-            width: 60px;
-            height: 60px;
+        .sign {
+            width: 40px;
+            height: 40px;
         }
 
         /* infowinfow */
+        #iw-container {
+            margin-bottom: 10px;
+        }
 
+        #iw-container .iw-title {
+            font-family: 'Open Sans Condensed', sans-serif;
+            font-size: 24px;
+            font-weight: 400;
+            padding: 5px;
+            background-color:orange;
+            color: white;
+            margin: 0;
+            border-radius: 2px 2px 0 0;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #iw-container .iw-content {
+            font-size: 13px;
+            line-height: 18px;
+            font-weight: 400;
+            margin-right: 1px;
+            padding: 15px 5px 20px 15px;
+            max-height: 140px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+     
+        .iw-subTitle {
+            font-size: 16px;
+            font-weight: 700;
+            padding: 5px 0;
+        }
+
+      
+
+        .iw-bottom-gradient {
+            position: absolute;
+            width: 326px;
+            height: 25px;
+            bottom: 10px;
+            right: 18px;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+            background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+            background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+            background: -ms-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+        }
 
         /* infowinfow */
     </style>
@@ -54,6 +100,8 @@
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKkBykAi2chLQNlT8yHC1fmcIGCiPTwT8"></script>
 
     <script>
+        let upvotenumber=0;
+        let downvotenumber=0;
         // In the following example, markers appear when the user clicks on the map.
         // Each marker is labeled with a single alphabetical character.
         var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -123,7 +171,7 @@
                 label: labels[labelIndex++ % labels.length],
                 map: map,
                 icon: icon1,
-                animation: google.maps.Animation.DROP,
+                
             });
 
             //activate popup window
@@ -136,37 +184,34 @@
 
             //Attach click event handler to the marker.
             google.maps.event.addListener(marker, "click", function (e) {
-                var content = 
-                    '<div class="modal-content">' +
-                    
-                    '<div class="modal-header">' +
-                    '<h4 class="modal-title">Hazard information</h4>' +
+                var content = '<div id="iw-container">' +
+                    '<div class="iw-title">' +
+                    '<div><p>Hazard Descriptions</p></div>'+
+                    '<img class="sign" src="images/snow.png">'+
                     '</div>' +
-                    
-                    '<div class="modal-body">' +
-                    '<div class="form-group">' +
-                    '<label for="hazardType">Hazard Type</label>' +
+                    '<div class="iw-content">' +
+                    '<div class="iw-subTitle">Jimmy Reports</div>' +
+                    '<p>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
+                    '<div class="iw-subTitle">More Reports</div>' +
+                    '<br>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
                     '</div>' +
-                    '<div class="form-group">' +
-                    '<p> Snow is here</p>' +
                     '</div>' +
-                    '<div class="form-group">' +
-                    '</div>' +
-                    '<img src="images/snow.png" id="snow">'+
-                    '</div>' +
-                    '<div class="modal-footer">' +
-                    '<button type="button" class="btn btn-primary" id="button3">Upvote</button>' +
-                    '<button type="button" class="btn btn-secondary" id="button4">Downvote</button>' +
-                    '</div>' +
-                    '</div>' ;
+                    '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +        
+                        '<img class="sign" src="images/upvote.png" onclick="upvotefun();">'+
+                        '<p id="upvote" style="font-size: 20px; padding-left:10px;">0</p>' +
+                        '<img class="sign" src="images/downvote.png" onclick="downvotefun();">'+
+                        '<p id="downvote" style="font-size: 20px;  padding-left:10px;">0</p>' +
+                    '</div>';
                 content +=
-                    "<br /><input type = 'button'  class='btn btn-secondary' value = 'Delete' onclick = 'DeleteMarker(" +
-                    marker
-                    .id +
-                    ");' value = 'Delete' />";
-
+                '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >'+
+                    "<button type = 'button' class='btn btn-secondary' style='text-align:center;' value = 'Delete' onclick = 'DeleteMarker(" +
+                    marker.id +
+                    ");'>Delete</button>"+
+                    '</div>';
+                    
                 var InfoWindow = new google.maps.InfoWindow({
-                    content: content
+                    content: content,
+                    maxWidth:350
                 });
                 InfoWindow.open(map, marker);
             });
@@ -190,6 +235,7 @@
 
                     //Remove the marker from array.
                     markers.splice(i, 1);
+
                     return;
                 }
             }
@@ -209,6 +255,22 @@
             $("#loginwindow").modal("hide");
         });
         //activate login window
+        
+       //upvote downvote function
+        function upvotefun() {
+            
+            upvotenumber+=1;
+            document.getElementById("upvote").innerHTML=upvotenumber;
+        };
+
+        function downvotefun() {
+            
+            downvotenumber+=1;
+            document.getElementById("downvote").innerHTML=downvotenumber;
+        };
+        //upvote downvote function
+ 
+
     </script>
 
 
