@@ -4,6 +4,8 @@ TASKS:
 **check firebase api (looks like we are using two api keys?)
  - i wasn't able to sign in
 
+map
+ - draw bike path onto the map
 
 markers
  - display correct marker information
