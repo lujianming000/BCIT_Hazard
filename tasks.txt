@@ -1,0 +1,29 @@
+TASKS:
+
+
+**check firebase api (looks like we are using two api keys?)
+ - i wasn't able to sign in
+
+
+markers
+ - display correct marker information
+ - all markers should be on the map upon first load-up (add all markers
+   from database onto the map)
+
+login
+ - create distinct index.html vs map.html
+   -> we can have index.html remove report button; clicking the navbar's
+      Hazard > Report Hazard button gives a prompt window asking user to
+      sign in first
+
+upvote/downvote
+ - a user should only be able to upvote/downvote once, right now they
+   can upvote as many times as they like
+ - after opening the marker info again, upvotes/downvotes are reset to 0
+   until upvoting again, then shows actual changes (I upvote > '1 upvote'
+   > close infowindow > open infowindow > '0 upvotes' > I upvote > '2 upvotes'
+
+misc.
+ - repo cleanup: all scripts in new .js files in scripts folder
+                 all <style> in new .css files in css folder
+                 follow commenting style from lecture example
