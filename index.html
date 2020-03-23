@@ -1,32 +1,176 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="utf-8">
     <title>BCIT Biking</title>
+
+    <!----------------------------------------------->
+    <!--  Meta tag for rendering on mobile devices -->
+    <!----------------------------------------------->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!----------------------------------------------->
+    <!-- CSS: Bootstrap, Firebase, other API -->
+    <!----------------------------------------------->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
+
+    <!------------------------>
+    <!-- Your own CSS files -->
+    <!------------------------>
+    <link type="text/css" rel="stylesheet" href="styles/styles.css">
+
 </head>
 
 <body>
-    <div style="position:absolute;left:20px;top:20px">
-        <form action="/action_page.php">
-            <div class="form-group">
-                <label for="email">Email address:</label>
-                <input type="email" class="form-control" placeholder="Enter email" id="email">
-            </div>
-            <div class="form-group">
-                <label for="pwd">Password:</label>
-                <input type="password" class="form-control" placeholder="Enter password" id="pwd">
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox"> Remember me
-                </label>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-    </div>
+    <!----------------------->
+    <!--  HTML Section -->
+    <!----------------------->
+
+    <!-- The surrounding HTML is left untouched by FirebaseUI.
+     Your app may use that space for branding, controls and other customizations.-->
+    <div id="map"></div>
+    <div id="loader">Loading...</div>
+
+
+    <!----------------------------------------------->
+    <!-- JS: Boostrap, Firebase, API related    -->
+    <!----------------------------------------------->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-firestore.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+    <script src="scripts/firebase_api_BCIT_Biking.js"> </script>
+
+    <!-- Google Map API-->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKkBykAi2chLQNlT8yHC1fmcIGCiPTwT8"></script>
+
+    <!--------------------------------------------------------------------->
+    <!-- JS files: Your own JavaScript functions included here    -->
+    <!--------------------------------------------------------------------->
+    <script src="scripts/scriptReportHazard.js"></script>
+
+    <!--------------------------------------------------------------------->
+    <!-- Make calls to your own JavaScript functions, here below-->
+    <!---------------------------------------------------------------------->
+    <script>
+
+        // ------------------
+        // -  LOGIN
+        // ------------------
+        
+        // Initialize the FirebaseUI Widget using Firebase.
+        var ui = new firebaseui.auth.AuthUI(firebase.auth());
+        var uiConfig = {
+            callbacks: {
+                signInSuccessWithAuthResult: function (authResult, redirectUrl) {
+                    // User successfully signed in.
+                    // Return type determines whether we continue the redirect automatically
+                    // or whether we leave that to developer to handle.
+                    //------------------------------------------------------------------------------------------
+                    // The code below is modified from default snippet provided by the FB documentation.
+                    //
+                    // If the user is a "brand new" user, then create a new "user" in your own database.
+                    // Assign this user with the name and email provided.
+                    // Before this works, you must enable "Firestore" from the firebase console.
+                    // The Firestore rules must allow the user to write. 
+                    //------------------------------------------------------------------------------------------
+                    var user = authResult.user;
+                    if (authResult.additionalUserInfo.isNewUser) {
+                        db.collection("users").doc(user.uid).set({
+                                name: user.displayName,
+                                email: user.email
+                            }).then(function () {
+                                console.log("New user added to firestore");
+                                window.location.assign("map.html");
+                            })
+                            .catch(function (error) {
+                                console.log("Error adding new user: " + error);
+                            });
+                    } else {
+                        return true;
+                    }
+                    return false;
+                },
+                uiShown: function () {
+                    // The widget is rendered.
+                    // Hide the loader.
+                    document.getElementById('loader').style.display = 'none';
+                }
+            },
+            // Will use popup for IDP Providers sign-in flow instead of the default, redirect.
+            signInFlow: 'popup',
+            signInSuccessUrl: 'map.html',
+            signInOptions: [
+                firebase.auth.EmailAuthProvider.PROVIDER_ID,
+            ],
+            // Terms of service url.
+            tosUrl: 'map.html',
+            // Privacy policy url.
+            privacyPolicyUrl: 'map.html',
+            accountChooserEnabled: false
+        };
+        // The start method will wait until the DOM is loaded.
+        // Inject the login interface into the HTML
+        let loginTimer = setTimeout(function () {
+            ui.start('#map', uiConfig);
+            clearTimeout(loginTimer);
+        }, 1000)
+        // ui.start('#firebase-auth-ui-config', uiConfig);
+
+
+        
+        // ------------------
+        // -  MAP BACKGROUND
+        // ------------------
+
+        var customStyle = [{
+            featureType: "poi",
+            elementType: "labels",
+            stylers: [{
+                visibility: "off"
+            }]
+        }];
+
+        function initialize() {
+            var BCIT = {
+                lat: 49.2482,
+                lng: -123
+            };
+            var BCIT_BOUNDS = {
+                north: 49.255864,
+                south: 49.241061,
+                west: -123.004939,
+                east: -122.995592
+            };
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 17,
+                minZoom: 15.8,
+                center: BCIT,
+                restriction: {
+                    latLngBounds: BCIT_BOUNDS,
+                    strictBounds: false
+                }
+            });
+
+            map.set("styles", customStyle)
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+    </script>
+
 </body>
 
 </html>
