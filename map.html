@@ -120,7 +120,7 @@
     <button type="button" id="report-btn" class="btn btn-danger btn-circle btn-xl">Report</button>
 
     <!-- popup window-->
-    <form class="modal fade" id="reporthazard">
+    <form class="modal fade" id="reportHazard">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
 
@@ -144,13 +144,10 @@
                         </select>
                     </div>
 
-
-                    <form>
                         <div class="form-group">
                             <label for="hazardDescription" class="col-form-label">Hazard Description</label>
                             <textarea class="form-control" id="hazardDescription"></textarea>
                         </div>
-                    </form>
 
                     <div>
                         <label for="photoInput">Upload a Photo</label>
@@ -162,7 +159,7 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-secondary" value="Submit">
+                    <input type="submit" class="btn btn-primary" value="Submit" id="button1">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 </div>
 
@@ -188,7 +185,6 @@
     <script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-firestore.js"></script>
     <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
     <script src="scripts/firebase_api_BCIT_Biking.js"></script>
-
     <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKkBykAi2chLQNlT8yHC1fmcIGCiPTwT8"></script>
 

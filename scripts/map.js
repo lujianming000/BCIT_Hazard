@@ -81,12 +81,12 @@ function addMarker(location, map) {
     });
 
     //activate popup window
-    $("#reporthazard").modal();
+    //$("#reportHazard").modal();
 
-    $("#button1").click(function () {
-        $("#reporthazard").modal("hide");
-    });
-
+    /*$("#button1").click(function () {
+        $("#reportHazard").modal("hide");
+    });*/
+    window.open("reportHazard.html");
 
     //Attach click event handler to the marker.
     google.maps.event.addListener(marker, "click", function (e) {
