@@ -1,107 +1,212 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="utf-8">
     <title>Landing Page</title>
-    <style>
-        /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
-        #map {
-            height: 100%;
-        }
 
-        /* Optional: Makes the sample page fill the window. */
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
+    <!----------------------------------------------->
+    <!--  Meta tag for rendering on mobile devices -->
+    <!----------------------------------------------->
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-        .btn-circle.btn-xl {
-            width: 70px;
-            height: 70px;
-            padding: 10px 16px;
-            border-radius: 35px;
-            font-size: 12px;
-            text-align: center;
-            position: fixed;
-            background-color: #ED553B;
-            border-color: #ED552A;
-            color: white;
-            font-family: Arial, Helvetica, sans-serif;
-            visibility: visible;
-        }
+    <!----------------------------------------->
+    <!-- CSS: Bootstrap, Firebase, other API -->
+    <!----------------------------------------->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
 
-        #report-btn {
-            left: 5vw;
-            top: 85vh;
-        }
+    <!------------------------>
+    <!-- Your own CSS files -->
+    <!------------------------>
+    <link type="text/css" rel="stylesheet" href="styles/styles.css">
 
-        .sign {
-            width: 40px;
-            height: 40px;
-        }
+</head>
 
-        /* infowinfow */
-        #iw-container {
-            margin-bottom: 10px;
-        }
+<body>
+    <!------------------>
+    <!-- HTML Section -->
+    <!------------------>
+    
+    <!--Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">BCIT Biking</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-        #iw-container .iw-title {
-            font-family: 'Open Sans Condensed', sans-serif;
-            font-size: 24px;
-            font-weight: 400;
-            padding: 5px;
-            background-color:orange;
-            color: white;
-            margin: 0;
-            border-radius: 2px 2px 0 0;
-            display: flex;
-            justify-content: space-between;
-        }
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <!-- <li class="nav-item">
+                    <a class="nav-link" onclick='$("#loginwindow").modal();'>Sign in</a>
+                </li> -->
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Home</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Hazard
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="#">Action</a>
+                        <a class="dropdown-item" href="#">Another action</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="#">Something else here</a>
+                    </div>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+    <!--/.Navbar -->
 
-        #iw-container .iw-content {
-            font-size: 13px;
-            line-height: 18px;
-            font-weight: 400;
-            margin-right: 1px;
-            padding: 15px 5px 20px 15px;
-            max-height: 140px;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-     
-        .iw-subTitle {
-            font-size: 16px;
-            font-weight: 700;
-            padding: 5px 0;
-        }
+    <!--login window -->
 
-      
+    <!-- <div class="modal fade" id="loginwindow">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content"> -->
 
-        .iw-bottom-gradient {
-            position: absolute;
-            width: 326px;
-            height: 25px;
-            bottom: 10px;
-            right: 18px;
-            background: linear-gradient(to bottom, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-            background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-            background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-            background: -ms-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
-        }
-
-        /* infowinfow */
-    </style>
+                <!-- Modal Header -->
+                <!-- <div class="modal-header">
+                    <h4 class="modal-title">Login Window</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div> -->
 
 
-    <!-- JS SCRIPT: GOOGLE MAPS -->
+                <!-- Modal body -->
+                <!-- <div class="modal-body">
+                    <form action="/action_page.php">
+                        <div class="form-group">
+                            <label for="email">Email address:</label>
+                            <input type="email" class="form-control" placeholder="Enter email" id="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="pwd">Password:</label>
+                            <input type="password" class="form-control" placeholder="Enter password" id="pwd">
+                        </div>
+                        <div class="form-group form-check">
+                            <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox"> Remember me
+                            </label>
+                        </div>
+
+                    </form>
+
+                </div> -->
+
+                <!-- Modal footer -->
+                <!-- <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="button2">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </div> -->
+    <!--login window -->
+
+    <!-- Google Map -->
+    <div id="map"></div>
+
+    <!--report button -->
+    <button type="button" id="report-btn" class="btn btn-danger btn-circle btn-xl">Report</button>
+
+    <!-- popup window-->
+    <form class="modal fade" id="reporthazard">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Hazard Information</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+
+                <!-- Modal body -->
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="hazardType">Hazard Type</label>
+                        <select class="form-control" id="hazardType">
+                            <option value="snow">Snow</option>
+                            <option value="pothole">Pothole</option>
+                            <option value="construction">Construction</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+
+                    <form>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">Hazard Description</label>
+                            <textarea class="form-control" id="message-text"></textarea>
+                        </div>
+                    </form>
+
+                    <div>
+                        <label for="photoInput">Upload a Photo</label>
+                        <input type="file" class="form-control-file" id="photoInput">
+                    </div>
+
+                </div>
+
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <input type="submit" value="Submit">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </form>
+
+    <!----------------------------------------->
+    <!-- JS: Boostrap, Firebase, API related -->
+    <!----------------------------------------->
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+        integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+        integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+        integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+        crossorigin="anonymous"></script>
+
+    <script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.9.2/firebase-firestore.js"></script>
+    <script src="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.js"></script>
+    <script src="scripts/firebase_api_BCIT_Biking.js"></script>
+
+    <!-- Google Maps API -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKkBykAi2chLQNlT8yHC1fmcIGCiPTwT8"></script>
 
+    <!-- popup window -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+    <!----------------------------------------------------------->
+    <!-- JS files: Your own JavaScript functions included here -->
+    <!----------------------------------------------------------->
+
+    <!------------------------------------------------------------->
+    <!-- Make calls to your own JavaScript functions, here below -->
+    <!------------------------------------------------------------->
     <script>
-        let upvotenumber=0;
-        let downvotenumber=0;
+        let upvotenumber = 0;
+        let downvotenumber = 0;
         // In the following example, markers appear when the user clicks on the map.
         // Each marker is labeled with a single alphabetical character.
         var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -171,7 +276,7 @@
                 label: labels[labelIndex++ % labels.length],
                 map: map,
                 icon: icon1,
-                
+
             });
 
             //activate popup window
@@ -186,8 +291,8 @@
             google.maps.event.addListener(marker, "click", function (e) {
                 var content = '<div id="iw-container">' +
                     '<div class="iw-title">' +
-                    '<div><p>Hazard Descriptions</p></div>'+
-                    '<img class="sign" src="images/snow.png">'+
+                    '<div><p>Hazard Descriptions</p></div>' +
+                    '<img class="sign" src="images/snow.png">' +
                     '</div>' +
                     '<div class="iw-content">' +
                     '<div class="iw-subTitle">Jimmy Reports</div>' +
@@ -196,22 +301,22 @@
                     '<br>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
                     '</div>' +
                     '</div>' +
-                    '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +        
-                        '<img class="sign" src="images/upvote.png" onclick="upvotefun();">'+
-                        '<p id="upvote" style="font-size: 20px; padding-left:10px;">0</p>' +
-                        '<img class="sign" src="images/downvote.png" onclick="downvotefun();">'+
-                        '<p id="downvote" style="font-size: 20px;  padding-left:10px;">0</p>' +
+                    '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
+                    '<img class="sign" src="images/upvote.png" onclick="upvotefun();">' +
+                    '<p id="upvote" style="font-size: 20px; padding-left:10px;">0</p>' +
+                    '<img class="sign" src="images/downvote.png" onclick="downvotefun();">' +
+                    '<p id="downvote" style="font-size: 20px;  padding-left:10px;">0</p>' +
                     '</div>';
                 content +=
-                '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >'+
+                    '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
                     "<button type = 'button' class='btn btn-secondary' style='text-align:center;' value = 'Delete' onclick = 'DeleteMarker(" +
                     marker.id +
-                    ");'>Delete</button>"+
+                    ");'>Delete</button>" +
                     '</div>';
-                    
+
                 var InfoWindow = new google.maps.InfoWindow({
                     content: content,
-                    maxWidth:350
+                    maxWidth: 350
                 });
                 InfoWindow.open(map, marker);
             });
@@ -242,205 +347,29 @@
         };
 
         google.maps.event.addDomListener(window, 'load', initialize);
-    </script>
 
-</head>
-
-<body>
-    <script>
         //activate login window
-        $("#loginwindow").modal();
+        // $("#loginwindow").modal();
 
-        $("#button2").click(function () {
-            $("#loginwindow").modal("hide");
-        });
+        // $("#button2").click(function () {
+        //     $("#loginwindow").modal("hide");
+        // });
         //activate login window
-        
-       //upvote downvote function
+
+        //upvote downvote function
         function upvotefun() {
-            
-            upvotenumber+=1;
-            document.getElementById("upvote").innerHTML=upvotenumber;
+
+            upvotenumber += 1;
+            document.getElementById("upvote").innerHTML = upvotenumber;
         };
 
         function downvotefun() {
-            
-            downvotenumber+=1;
-            document.getElementById("downvote").innerHTML=downvotenumber;
+
+            downvotenumber += 1;
+            document.getElementById("downvote").innerHTML = downvotenumber;
         };
         //upvote downvote function
- 
-
     </script>
-
-
-    <!--Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">BCIT Biking</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item">
-                    <a class="nav-link" onclick='$("#loginwindow").modal();'>Sign in</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Home</a>
-                </li>
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Hazard
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </li>
-            </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
-        </div>
-    </nav>
-    <!--/.Navbar -->
-
-    <!--login window -->
-
-    <div class="modal fade" id="loginwindow">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Login Window</h4>
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                </div>
-
-
-                <!-- Modal body -->
-                <div class="modal-body">
-                    <form action="/action_page.php">
-                        <div class="form-group">
-                            <label for="email">Email address:</label>
-                            <input type="email" class="form-control" placeholder="Enter email" id="email">
-                        </div>
-                        <div class="form-group">
-                            <label for="pwd">Password:</label>
-                            <input type="password" class="form-control" placeholder="Enter password" id="pwd">
-                        </div>
-                        <div class="form-group form-check">
-                            <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox"> Remember me
-                            </label>
-                        </div>
-
-                    </form>
-
-                </div>
-
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="button2">Submit</button>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-
-            </div>
-        </div>
-    </div>
-    <!--login window -->
-
-
-
-
-
-
-
-    <!-- Google Map -->
-    <div id="map"></div>
-
-    <!--report button -->
-    <button type="button" id="report-btn" class="btn btn-danger btn-circle btn-xl">Report</button>
-    <!--report button -->
-
-    <!-- popup window-->
-    <form class="modal fade" id="reporthazard">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-
-                <!-- Modal Header -->
-                <div class="modal-header">
-                    <h4 class="modal-title">Hazard Information</h4>
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                </div>
-
-
-                <!-- Modal body -->
-                <div class="modal-body">
-
-                    <div class="form-group">
-                        <label for="hazardType">Hazard Type</label>
-                        <select class="form-control" id="hazardType">
-                            <option value="snow">Snow</option>
-                            <option value="pothole">Pothole</option>
-                            <option value="construction">Construction</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-
-
-                    <form>
-                        <div class="form-group">
-                            <label for="message-text" class="col-form-label">Hazard Description</label>
-                            <textarea class="form-control" id="message-text"></textarea>
-                        </div>
-                    </form>
-
-                    <div>
-                        <label for="photoInput">Upload a Photo</label>
-                        <input type="file" class="form-control-file" id="photoInput">
-                    </div>
-
-                </div>
-
-
-                <!-- Modal footer -->
-                <div class="modal-footer">
-                    <input type="submit" value="Submit">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
-
-            </div>
-        </div>
-    </form>
-    <!-- popup window -->
-
-
-
-
-
-
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
-    <script src="scripts/firebase_api_BCIT_Biking.js"></script>
-
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
-        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/3.5.2/firebaseui.css" />
-    <!-- popup window-->
-
-
-
 
 </body>
 
