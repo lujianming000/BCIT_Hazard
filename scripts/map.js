@@ -16,6 +16,7 @@ var markers = [];
 var uniqueId = 1;
 
 let reportButtonClicked = false;
+let currentClickPosition;
 
 /**
  * Initialize Google Maps.
@@ -45,7 +46,7 @@ function initialize() {
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
-        addMarker(event.latLng, map);
+        reportHazard(event.latLng);
     });
     map.set("styles", customStyle)
 }
@@ -54,7 +55,17 @@ function initialize() {
  * 'Report' button is clicked.
  */
 function reportClicked() {
+    
     reportButtonClicked = true;
+}
+
+function reportHazard(location){
+    if (reportButtonClicked) {
+        currentClickPosition = location;
+        window.open("reportHazard.html");
+        reportButtonClicked = false;
+
+    }
 }
 
 /**
@@ -62,10 +73,7 @@ function reportClicked() {
  * @param {*} location location of click
  * @param {*} map to add
  */
-function addMarker(location, map) {
-    if (!reportButtonClicked) {
-        return
-    }
+function addMarker(hazard, map) {
 
 
     // Add the marker at the clicked location, and add the next-available label
@@ -73,7 +81,7 @@ function addMarker(location, map) {
     var icon1 =
         'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
     var marker = new google.maps.Marker({
-        position: location,
+        position: hazard.position,
         label: labels[labelIndex++ % labels.length],
         map: map,
         icon: icon1,
@@ -86,7 +94,7 @@ function addMarker(location, map) {
     /*$("#button1").click(function () {
         $("#reportHazard").modal("hide");
     });*/
-    window.open("reportHazard.html");
+    //window.open("reportHazard.html");
 
     //Attach click event handler to the marker.
     google.maps.event.addListener(marker, "click", function (e) {

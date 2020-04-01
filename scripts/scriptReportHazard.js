@@ -3,12 +3,11 @@ function writeReport() {
         e.preventDefault();
         let hT = document.getElementById("hazardType").value;
         let hD = document.getElementById("hazardDescription").value;
-        let hP = document.getElementById("photoInput").value;
-        db.collection("hazards").doc("02").set({
-            HazardType: hT,
-            HazardDescription: hD,
-            HazardUser: "John Doe",
-            Position: [100, 100]
+        db.collection("hazards").add({
+            hazardType: hT,
+            hazardDescription: hD,
+            hazardUser: "John Doe",
+            position: currentClickPosition
         }).then(function () {
             window.location.assign("map.html");
         })
@@ -20,7 +19,8 @@ function showHazards() {
         changes = snapshot.docChanges();
         changes.forEach(function (change) {
             if (change.type == "added") {
-                console.log(change.doc);
+                console.log(change.doc.data());
+                //addMarker(change, map);
             }
 
         })
@@ -28,11 +28,14 @@ function showHazards() {
 }
 
 function addHazardToMap(hazard) {
+
+    let marker = new google.map.Marker({position: hazard.position, map: map})
+    markers.push(marker);
+
+
     document.getElementById("type").innerHtml = hazard.HazardType;
     document.getElementById("description").innerHtml = hazard.HazardDescription;
     document.getElementById("user").innerHtml = hazard.HazardUser;
-    document.getElementById("longitude").innerHtml = hazard.Position[0];
-    document.getElementById("latitude").innerHtml = hazard.Position[1];
 
 }
 showHazards();
