@@ -98,9 +98,18 @@ function initialize() {
 
     document.getElementById("report-btn").onclick = reportClicked;
 
+    //TEST CODE - NEW VARIABLE FOR SAVING DATA LAT AND LNG
+    var testDataJASON = {lat: null, lng: null};
+
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
         reportHazard(event.latLng);
+
+        //TEST CODE - NEW VARIABLE FOR SAVING DATA LAT AND LNG
+        testDataJASON.lat = event.latLng.lat();
+        testDataJASON.lng = event.latLng.lng();
+        console.log(testDataJASON.lat);
+        console.log(testDataJASON.lng);
 
     });
     map.set("styles", customStyle)
@@ -117,6 +126,7 @@ function reportClicked() {
 function reportHazard(location) {
     if (reportButtonClicked) {
         currentClickPosition = location;
+        console.log(currentClickPosition.toString());
         window.open("reportHazard.html");
         reportButtonClicked = false;
 
