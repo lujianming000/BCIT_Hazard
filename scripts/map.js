@@ -1,7 +1,5 @@
 let upvotenumber = 0;
 let downvotenumber = 0;
-// In the following example, markers appear when the user clicks on the map.
-
 
 var labelIndex = 0;
 var customStyle = [{
@@ -17,6 +15,8 @@ var uniqueId = 1;
 
 let reportButtonClicked = false;
 let currentClickPosition;
+
+let user = {email: null, name: "anonymous user"};
 
 /**
  * Initialize Google Maps.
@@ -93,21 +93,21 @@ function initialize() {
             });
         })
 
-
-
-
     document.getElementById("report-btn").onclick = reportClicked;
 
     //TEST CODE - NEW VARIABLE FOR SAVING DATA LAT AND LNG
-    var testDataJASON = {lat: null, lng: null};
+    // var user = document.getElementById("welcomeUser").innerHTML;
+    var testDataJASON = {sender:null, lat: null, lng: null};
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
         reportHazard(event.latLng);
 
         //TEST CODE - NEW VARIABLE FOR SAVING DATA LAT AND LNG
+        testDataJASON.sender = user.name;
         testDataJASON.lat = event.latLng.lat();
         testDataJASON.lng = event.latLng.lng();
+        console.log(testDataJASON.sender);
         console.log(testDataJASON.lat);
         console.log(testDataJASON.lng);
 
@@ -119,30 +119,29 @@ function initialize() {
  * 'Report' button is clicked.
  */
 function reportClicked() {
-
     reportButtonClicked = true;
 }
 
+/**
+ * Report a hazard.
+ * @param {enum} location 
+ */
 function reportHazard(location) {
     if (reportButtonClicked) {
         currentClickPosition = location;
         console.log(currentClickPosition.toString());
         window.open("reportHazard.html");
         reportButtonClicked = false;
-
     }
 }
+
 
 /**
  * Adds a hazard to the map.
  * @param {*} location location of click
  * @param {*} map to add
  */
-
-
 function addMarker(hazard, map) {
-
-
     // Add the marker at the clicked location, and add the next-available label
     // from the array of alphabetical characters.
     var icon1 =
@@ -162,7 +161,6 @@ function addMarker(hazard, map) {
         $("#reportHazard").modal("hide");
     });*/
     //window.open("reportHazard.html");
-
 
     reportButtonClicked = false;
 }
@@ -187,6 +185,29 @@ function DeleteMarker(id) {
 };
 
 /**
+ * Initialize user to landing page.
+ */
+function initUser() {
+    var myUserId = localStorage.getItem('myUserId');
+    var docRef = db.collection("users").doc(myUserId);
+    docRef.get().then(function(doc) {
+        if (doc.exists) {
+            user.name =  doc.data().name;
+            user.email = doc.data().email;
+            console.log("Document data: ", doc.data());
+            // navbar - put a welcome greeting to user
+            document.getElementById("welcomeUser").innerHTML = user.name;
+        } else {
+            console.log("No such document!");
+            // navbar - put a welcome greeting to user: user is anonymous
+            document.getElementById("welcomeUser").innerHTML = user.name;
+        }
+    }).catch(function(error) {
+        console.log("Error getting document:", error);
+    });
+}
+
+/**
  * Upvote a hazard.
  */
 function upvotefun() {
@@ -201,12 +222,3 @@ function downvotefun() {
     downvotenumber += 1;
     document.getElementById("downvote").innerHTML = downvotenumber;
 };
-
-//OLD LOGIN FUNCTION
-//activate login window
-// $("#loginwindow").modal();
-
-// $("#button2").click(function () {
-//     $("#loginwindow").modal("hide");
-// });
-//activate login window
