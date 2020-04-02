@@ -1,3 +1,8 @@
+var passingmarkerlat = localStorage.getItem("passinglat");
+var passingmarkerlng = localStorage.getItem("passinglng");
+
+
+
 function writeReport() {
     document.getElementById("reportHazard").addEventListener("submit", function (e) {
         e.preventDefault();
@@ -9,10 +14,8 @@ function writeReport() {
             hazardUser: "John Doe",
             upvote: 0,
             downvote:0,
-            position: {
-                lat: 49.248,
-                lng: -123
-            },
+            lat: passingmarkerlat,
+            lng: passingmarkerlng,
             marker:true,
         }).then(function () {
             window.location.assign("map.html");
@@ -20,7 +23,7 @@ function writeReport() {
     })
 }
 
-function showHazards() {
+/*function showHazards() {
     db.collection("hazards").onSnapshot(function (snapshot) {
         changes = snapshot.docChanges();
         changes.forEach(function (change) {
@@ -32,6 +35,7 @@ function showHazards() {
         })
     })
 }
+*/
 
 function addHazardToMap(hazard) {
 
@@ -44,5 +48,5 @@ function addHazardToMap(hazard) {
     document.getElementById("user").innerHtml = hazard.HazardUser;
 
 }
-showHazards();
+
 writeReport();
