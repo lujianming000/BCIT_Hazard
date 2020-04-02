@@ -1,8 +1,8 @@
 let upvotenumber = 0;
 let downvotenumber = 0;
 // In the following example, markers appear when the user clicks on the map.
-// Each marker is labeled with a single alphabetical character.
-var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+
 var labelIndex = 0;
 var customStyle = [{
     featureType: "poi",
@@ -42,11 +42,66 @@ function initialize() {
         }
     });
 
+
+    db.collection("hazards").where("marker", "==", true)
+        .get()
+        .then(function (querySnapshot) {
+            querySnapshot.forEach(function (doc) {
+                var marker = new google.maps.Marker({
+                    position: doc.data().position,
+                    map: map,
+                });
+                marker.setMap(map);
+
+                //Set unique id
+                marker.id = uniqueId;
+                uniqueId++;
+                markers.push(marker);
+
+                google.maps.event.addListener(marker, "click", function (e) {
+                    var content = '<div id="iw-container">' +
+                        '<div class="iw-title">' +
+                        '<div><p>Hazard Descriptions</p></div>' +
+                        '<img class="sign" src="images/snow.png">' +
+                        '</div>' +
+                        '<div class="iw-content">' +
+                        '<div class="iw-subTitle">Jimmy Reports</div>' +
+                        '<p>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
+                        '<div class="iw-subTitle">More Reports</div>' +
+                        '<br>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
+                        '<img class="sign" src="images/upvote.png" onclick="upvotefun();">' +
+                        '<p id="upvote" style="font-size: 20px; padding-left:10px;">0</p>' +
+                        '<img class="sign" src="images/downvote.png" onclick="downvotefun();">' +
+                        '<p id="downvote" style="font-size: 20px;  padding-left:10px;">0</p>' +
+                        '</div>';
+                    content +=
+                        '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
+                        "<button type = 'button' class='btn btn-secondary' style='text-align:center;' value = 'Delete' onclick = 'DeleteMarker(" +
+                        marker.id +
+                        ");'>Delete</button>" +
+                        '</div>';
+
+                    var InfoWindow = new google.maps.InfoWindow({
+                        content: content,
+                        maxWidth: 350
+                    });
+                    InfoWindow.open(map, marker);
+                });
+            });
+        })
+
+
+
+
     document.getElementById("report-btn").onclick = reportClicked;
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
         reportHazard(event.latLng);
+
     });
     map.set("styles", customStyle)
 }
@@ -55,11 +110,11 @@ function initialize() {
  * 'Report' button is clicked.
  */
 function reportClicked() {
-    
+
     reportButtonClicked = true;
 }
 
-function reportHazard(location){
+function reportHazard(location) {
     if (reportButtonClicked) {
         currentClickPosition = location;
         window.open("reportHazard.html");
@@ -73,6 +128,8 @@ function reportHazard(location){
  * @param {*} location location of click
  * @param {*} map to add
  */
+
+
 function addMarker(hazard, map) {
 
 
@@ -80,7 +137,7 @@ function addMarker(hazard, map) {
     // from the array of alphabetical characters.
     var icon1 =
         'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-    var marker = new google.maps.Marker({
+     var   marker = new google.maps.Marker({
         position: hazard.position,
         label: labels[labelIndex++ % labels.length],
         map: map,
@@ -96,44 +153,6 @@ function addMarker(hazard, map) {
     });*/
     //window.open("reportHazard.html");
 
-    //Attach click event handler to the marker.
-    google.maps.event.addListener(marker, "click", function (e) {
-        var content = '<div id="iw-container">' +
-            '<div class="iw-title">' +
-            '<div><p>Hazard Descriptions</p></div>' +
-            '<img class="sign" src="images/snow.png">' +
-            '</div>' +
-            '<div class="iw-content">' +
-            '<div class="iw-subTitle">Jimmy Reports</div>' +
-            '<p>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
-            '<div class="iw-subTitle">More Reports</div>' +
-            '<br>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
-            '</div>' +
-            '</div>' +
-            '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
-            '<img class="sign" src="images/upvote.png" onclick="upvotefun();">' +
-            '<p id="upvote" style="font-size: 20px; padding-left:10px;">0</p>' +
-            '<img class="sign" src="images/downvote.png" onclick="downvotefun();">' +
-            '<p id="downvote" style="font-size: 20px;  padding-left:10px;">0</p>' +
-            '</div>';
-        content +=
-            '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
-            "<button type = 'button' class='btn btn-secondary' style='text-align:center;' value = 'Delete' onclick = 'DeleteMarker(" +
-            marker.id +
-            ");'>Delete</button>" +
-            '</div>';
-
-        var InfoWindow = new google.maps.InfoWindow({
-            content: content,
-            maxWidth: 350
-        });
-        InfoWindow.open(map, marker);
-    });
-
-    //Set unique id
-    marker.id = uniqueId;
-    uniqueId++;
-    markers.push(marker);
 
     reportButtonClicked = false;
 }
@@ -174,10 +193,10 @@ function downvotefun() {
 };
 
 //OLD LOGIN FUNCTION
-        //activate login window
-        // $("#loginwindow").modal();
+//activate login window
+// $("#loginwindow").modal();
 
-        // $("#button2").click(function () {
-        //     $("#loginwindow").modal("hide");
-        // });
-        //activate login window
+// $("#button2").click(function () {
+//     $("#loginwindow").modal("hide");
+// });
+//activate login window

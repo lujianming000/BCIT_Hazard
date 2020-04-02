@@ -7,7 +7,13 @@ function writeReport() {
             hazardType: hT,
             hazardDescription: hD,
             hazardUser: "John Doe",
-            position: currentClickPosition
+            upvote: 0,
+            downvote:0,
+            position: {
+                lat: 49.248,
+                lng: -123
+            },
+            marker:true,
         }).then(function () {
             window.location.assign("map.html");
         })
