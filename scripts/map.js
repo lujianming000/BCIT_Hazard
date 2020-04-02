@@ -1,5 +1,8 @@
 let upvotenumber = 0;
 let downvotenumber = 0;
+// In the following example, markers appear when the user clicks on the map.
+var markerlat;
+var markerlng;
 
 var labelIndex = 0;
 var customStyle = [{
@@ -14,7 +17,7 @@ var markers = [];
 var uniqueId = 1;
 
 let reportButtonClicked = false;
-let currentClickPosition;
+
 
 let user = {email: null, name: "anonymous user"};
 
@@ -48,7 +51,7 @@ function initialize() {
         .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
                 var marker = new google.maps.Marker({
-                    position: doc.data().position,
+                    position: {lat: parseFloat(doc.data().lat), lng: parseFloat(doc.data().lng)},
                     map: map,
                 });
                 marker.setMap(map);
@@ -103,6 +106,12 @@ function initialize() {
     google.maps.event.addListener(map, 'click', function (event) {
         reportHazard(event.latLng);
 
+        markerlat = event.latLng.lat();
+        markerlng = event.latLng.lng();
+        
+        localStorage.setItem('passinglat', markerlat);
+        localStorage.setItem('passinglng', markerlng);
+
         //TEST CODE - NEW VARIABLE FOR SAVING DATA LAT AND LNG
         testDataJASON.sender = user.name;
         testDataJASON.lat = event.latLng.lat();
@@ -110,7 +119,6 @@ function initialize() {
         console.log(testDataJASON.sender);
         console.log(testDataJASON.lat);
         console.log(testDataJASON.lng);
-
     });
     map.set("styles", customStyle)
 }
@@ -128,9 +136,7 @@ function reportClicked() {
  */
 function reportHazard(location) {
     if (reportButtonClicked) {
-        currentClickPosition = location;
-        console.log(currentClickPosition.toString());
-        window.open("reportHazard.html");
+        window.location.assign("reportHazard.html");
         reportButtonClicked = false;
     }
 }
@@ -175,7 +181,7 @@ function DeleteMarker(id) {
         if (markers[i].id == id) {
             //Remove the marker from Map                  
             markers[i].setMap(null);
-
+            
             //Remove the marker from array.
             markers.splice(i, 1);
 
