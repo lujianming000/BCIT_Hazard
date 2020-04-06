@@ -1,7 +1,8 @@
-
 // In the following example, markers appear when the user clicks on the map.
-var markerlat;
-var markerlng;
+var markerLat;
+var markerLng;
+var markerType;
+var markerDescription;
 
 var labelIndex = 0;
 var customStyle = [{
@@ -58,56 +59,12 @@ function initializeMap() {
         .get()
         .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
-            
+                markerLat = doc.data().lat;
+                markerLng = doc.data().lng;
+                markerType = doc.data().hazardType;
+                markerDescription = doc.data().hazardDescription;
 
-                var marker = new google.maps.Marker({
-                    position: {
-                        lat: doc.data().lat,
-                        lng: doc.data().lng
-                    },
-                    map: map,
-                });
-                marker.setMap(map);
-
-                //Set unique id
-                marker.id = uniqueId;
-                uniqueId++;
-                markers.push(marker);
-
-
-                google.maps.event.addListener(marker, "click", function (e) {
-                    
-                    
-                    var content = '<div id="iw-container">' +
-                        '<div class="iw-title">' +
-                        '<div><p>Hazard</p></div>' +
-                        '<img class="sign" src="images/snow.png">' +
-                        '</div>' +
-                        '<div class="iw-content">' +
-                        '<div class="iw-subTitle">' + doc.data().hazardType + '</div>' +
-                        '<p>' + doc.data().hazardDescription + '</p>' +
-                        '</div>' +
-                        '</div>' +
-                        '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
-                        '<img class="sign" src="images/upvote.png" onclick="upvotefun();">' +
-                        '<p id="upvote" style="font-size: 20px; padding-left:10px;">0</p>' +
-                        '<img class="sign" src="images/downvote.png" onclick="downvotefun();">' +
-                        '<p id="downvote" style="font-size: 20px;  padding-left:10px;">0</p>' +
-                        '</div>';
-                    content +=
-                        '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
-                        "<button type = 'button' class='btn btn-secondary' style='text-align:center;' value = 'Delete' onclick = 'DeleteMarker(" +
-                        marker.id +
-                        ");'>Delete</button>" +
-                        '</div>';
-
-                    var InfoWindow = new google.maps.InfoWindow({
-                        content: content,
-                        maxWidth: 350
-                    });
-                    InfoWindow.open(map, marker);
-
-                });
+                addMarkerToMap(map);
             });
         })
 
@@ -115,43 +72,21 @@ function initializeMap() {
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
-        // ~~~~~~~~~~~~~~
-        // ~~ OLD CODE ~~
-        // ~~~~~~~~~~~~~~
-
-        // mapClicked(event.latLng, map); // old test
-
-        // markerlat = event.latLng.lat();
-        // markerlng = event.latLng.lng();
-
-        // localStorage.setItem('passinglat', markerlat);
-        // localStorage.setItem('passinglng', markerlng);
-
-        // ~~~~~~~~~~~~~~
-        // ~~ NEW CODE ~~
-        // ~~~~~~~~~~~~~~
         if (isReportButtonClicked) {
-            console.log("line 125 called: new portion of code");
-
             //activate popup window // Get the modal: 'Report Hazard' pop-up window
             $("#reportHazardWindow").modal();
 
             // When the user cicks on 'Submit', make a new marker.
             $("#submitReport").click(function () {
-                console.log("submit button clicked");
-
                 // create new hazard
-                createHazard(event.latLng);
+                createHazard(event.latLng, map);
 
                 //hide modal 
                 $("#reportHazardWindow").modal("hide");
-
-                // location.reload();
             });
 
             isReportButtonClicked = false;
         }
-
     });
 
     // invoke custom style onto map
@@ -159,72 +94,76 @@ function initializeMap() {
 }
 
 // add new hazard to firebase 'hazards' collection
-function createHazard(location) {
-    console.log("reached createHazard");
+function createHazard(location, map) {
+    markerLat = location.lat();
+    markerLng = location.lng();
+    markerType = reportHazardType.value;
+    markerDescription = reportHazardDescription.value;
+
     db.collection("hazards").add({
         sender: user.name,
         email: user.email,
-        lat: location.lat(),
-        lng: location.lng(),
-        hazardType: reportHazardType.value,
-        hazardDescription: reportHazardDescription.value,
+        lat: markerLat,
+        lng: markerLng,
+        hazardType: markerType,
+        hazardDescription: markerDescription,
         upvote: 0,
         downvote: 0,
         marker: true
     });
-    console.log("finished createHazard");
+
+    addMarkerToMap(map);
 }
 
-// OLD - SHOULD NO LONGER NEED
-/**
- * Report a hazard.
- * @param {enum} location 
- */
-function mapClicked(location, map) {
-    if (isReportButtonClicked) {
-        // window.location.assign("reportHazard.html"); //-> scriptReportHazard.js
+function addMarkerToMap(map) {
+    var marker = new google.maps.Marker({
+        position: {
+            lat: markerLat,
+            lng: markerLng
+        },
+        map: map,
+    });
+    marker.setMap(map);
 
-        console.log("mapClicked called"); // test
-        addMarker(location, map); // try: report to database with modal
-    }
+    //Set unique id
+    marker.id = uniqueId;
+    uniqueId++;
+    markers.push(marker);
+
+
+    google.maps.event.addListener(marker, "click", function (e) {
+        
+        var content = '<div id="iw-container">' +
+            '<div class="iw-title">' +
+            '<div><p>Hazard</p></div>' +
+            '<img class="sign" src="images/snow.png">' +
+            '</div>' +
+            '<div class="iw-content">' +
+            '<div class="iw-subTitle">' + markerType + '</div>' +
+            '<p>' + markerDescription + '</p>' +
+            '</div>' +
+            '</div>' +
+            '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
+            '<img class="sign" src="images/upvote.png" onclick="upvotefun();">' +
+            '<p id="upvote" style="font-size: 20px; padding-left:10px;">0</p>' +
+            '<img class="sign" src="images/downvote.png" onclick="downvotefun();">' +
+            '<p id="downvote" style="font-size: 20px;  padding-left:10px;">0</p>' +
+            '</div>';
+        content +=
+            '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
+            "<button type = 'button' class='btn btn-secondary' style='text-align:center;' value = 'Delete' onclick = 'DeleteMarker(" +
+            marker.id +
+            ");'>Delete</button>" +
+            '</div>';
+
+        var InfoWindow = new google.maps.InfoWindow({
+            content: content,
+            maxWidth: 350
+        });
+        InfoWindow.open(map, marker);
+
+    });
 }
-
-
-// /**
-//  * Adds a hazard to the map.
-//  * @param {*} location location of click
-//  * @param {*} map to add
-//  */
-// function addMarker(hazard, map) {
-//     // Add the marker at the clicked location, and add the next-available label
-//     // from the array of alphabetical characters.
-//     // var icon1 =
-//     //     'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-//     //  var   marker = new google.maps.Marker({
-//     //     position: hazard.position,
-//     //     // label: labels[labelIndex++ % labels.length],
-//     //     map: map,
-//     //     icon: icon1,
-
-//     // });
-
-//     //activate popup window // Get the modal: 'Report Hazard' pop-up window
-//     $("#reportHazardWindow").modal();
-
-//     // When the user cicks on 'Submit', make a new marker.
-//     $("#testReport").click(function () {
-//         console.log("submit button clicked");
-//         // $("#reportHazardWindow").modal("hide"); //old
-//         let reportHazardType = document.getElementById("hazardType");
-//         let reportHazardDescription = document.getElementById("hazardDescription");
-//         console.log(reportHazardType.value);
-//         console.log(reportHazardDescription.value);
-//     });
-
-//     // window.open("reportHazard.html"); //-> scriptReportHazard.js
-
-//     isReportButtonClicked = false;
-// }
 
 /**
  * Find and remove the hazard from the map.
@@ -247,10 +186,8 @@ function DeleteMarker(id) {
                             marker: false
                         });
 
-                        
                     });
                 })
-
 
             //Remove the marker from array.
             markers.splice(i, 1);

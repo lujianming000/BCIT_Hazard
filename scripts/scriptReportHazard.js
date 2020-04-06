@@ -1,5 +1,5 @@
-var passingmarkerlat = localStorage.getItem("passinglat");
-var passingmarkerlng = localStorage.getItem("passinglng");
+// var passingmarkerlat = localStorage.getItem("passinglat");
+// var passingmarkerlng = localStorage.getItem("passinglng");
 
 // function writeReport() {
 //     document.getElementById("reportHazard").addEventListener("submit", function (e) {
@@ -35,16 +35,16 @@ var passingmarkerlng = localStorage.getItem("passinglng");
 }
 */
 
-function addHazardToMap(hazard) {
+// function addHazardToMap(hazard) {
 
-    let marker = new google.map.Marker({position: hazard.position, map: map})
-    markers.push(marker);
+//     let marker = new google.map.Marker({position: hazard.position, map: map})
+//     markers.push(marker);
 
 
-    document.getElementById("type").innerHtml = hazard.HazardType;
-    document.getElementById("description").innerHtml = hazard.HazardDescription;
-    document.getElementById("user").innerHtml = hazard.HazardUser;
+//     document.getElementById("type").innerHtml = hazard.HazardType;
+//     document.getElementById("description").innerHtml = hazard.HazardDescription;
+//     document.getElementById("user").innerHtml = hazard.HazardUser;
 
-}
+// }
 
-writeReport();
+// writeReport();
