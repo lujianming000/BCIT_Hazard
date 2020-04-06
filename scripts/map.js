@@ -62,8 +62,8 @@ function initializeMap() {
 
                 var marker = new google.maps.Marker({
                     position: {
-                        lat: parseFloat(doc.data().lat),
-                        lng: parseFloat(doc.data().lng)
+                        lat: doc.data().lat,
+                        lng: doc.data().lng
                     },
                     map: map,
                 });
@@ -166,7 +166,8 @@ function createHazard(location, map) {
         hazardType: reportHazardType.value,
         hazardDescription: reportHazardDescription.value,
         upvote: 0,
-        downvote: 0
+        downvote: 0,
+        marker: true
     });
 }
 
