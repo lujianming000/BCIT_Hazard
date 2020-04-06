@@ -48,6 +48,29 @@ function initialize() {
         }
     });
 
+    var BikePath = [
+        {lat: 49.254379443332255, lng: -123.00420298283386},
+        {lat: 49.25179494593293, lng: -123.00413324539947},
+        {lat: 49.25175993043178, lng: -122.99969150727081},
+        {lat: 49.25179494593293, lng: -123.00413324539947},
+        {lat: 49.247841007021364, lng: -123.00411715214538},
+        {lat: 49.24588215594371, lng: -123.00293818296315},
+        {lat: 49.243050272110736, lng: -123.00280823414612},
+        {lat: 49.24167740274324, lng: -122.99817337696838},
+        {lat: 49.25025593625811, lng: -122.99828254167252},
+        {lat: 49.25181560977754, lng: -122.99530194592559},
+        {lat: 49.254034441825574, lng: -122.99379933154079},
+      ];
+
+    var BikeRoute = new google.maps.Polyline({
+        path: BikePath,
+        geodesic: true,
+        strokeColor: '#FF0000',
+        strokeOpacity: 1.0,
+        strokeWeight: 2
+      });
+
+    BikeRoute.setMap(map); 
 
     db.collection("hazards").where("marker", "==", true)
         .get()
@@ -267,3 +290,4 @@ function downvotefun() {
     });   
     document.getElementById("downvote").innerHTML = doc.data().downvote;
 };
+
