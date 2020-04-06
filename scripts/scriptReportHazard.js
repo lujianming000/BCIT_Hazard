@@ -7,7 +7,7 @@ function writeReport() {
             hazardType: hT,
             hazardDescription: hD,
             hazardUser: "John Doe",
-            position: currentClickPosition
+            position: 
         }).then(function () {
             window.location.assign("map.html");
         })
@@ -20,7 +20,7 @@ function showHazards() {
         changes.forEach(function (change) {
             if (change.type == "added") {
                 console.log(change.doc.data());
-                //addMarker(change, map);
+                //addMarker(change.doc.data(), map);
             }
 
         })
