@@ -27,7 +27,7 @@ var passingmarkerlng = localStorage.getItem("passinglng");
         changes.forEach(function (change) {
             if (change.type == "added") {
                 console.log(change.doc.data());
-                //addMarker(change, map);
+                //addMarker(change.doc.data(), map);
             }
 
         })

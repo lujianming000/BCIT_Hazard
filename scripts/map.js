@@ -1,5 +1,4 @@
-let upvotenumber = 0;
-let downvotenumber = 0;
+
 // In the following example, markers appear when the user clicks on the map.
 var markerlat;
 var markerlng;
@@ -18,6 +17,8 @@ var uniqueId = 1;
 
 let isReportButtonClicked = false;
 
+let selectedlat;
+let getid;
 
 let user = {
     email: null,
@@ -57,6 +58,8 @@ function initializeMap() {
         .get()
         .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
+            
+
                 var marker = new google.maps.Marker({
                     position: {
                         lat: parseFloat(doc.data().lat),
@@ -71,17 +74,18 @@ function initializeMap() {
                 uniqueId++;
                 markers.push(marker);
 
+
                 google.maps.event.addListener(marker, "click", function (e) {
+                    
+                    
                     var content = '<div id="iw-container">' +
                         '<div class="iw-title">' +
-                        '<div><p>Hazard Descriptions</p></div>' +
+                        '<div><p>Hazard</p></div>' +
                         '<img class="sign" src="images/snow.png">' +
                         '</div>' +
                         '<div class="iw-content">' +
-                        '<div class="iw-subTitle">Jimmy Reports</div>' +
-                        '<p>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
-                        '<div class="iw-subTitle">More Reports</div>' +
-                        '<br>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
+                        '<div class="iw-subTitle">' + doc.data().hazardType + '</div>' +
+                        '<p>' + doc.data().hazardDescription + '</p>' +
                         '</div>' +
                         '</div>' +
                         '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
@@ -102,6 +106,7 @@ function initializeMap() {
                         maxWidth: 350
                     });
                     InfoWindow.open(map, marker);
+
                 });
             });
         })
@@ -224,8 +229,23 @@ function DeleteMarker(id) {
     //Find and remove the marker from the Array
     for (var i = 0; i < markers.length; i++) {
         if (markers[i].id == id) {
-            //Remove the marker from Map                  
+            //Remove the marker from Map                 
             markers[i].setMap(null);
+            selectedlat = markers[i].getPosition().lat() + "";
+
+            db.collection("hazards").where("lat", "==", selectedlat)
+                .get()
+                .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+
+                        db.collection("hazards").doc(doc.id).update({
+                            marker: false
+                        });
+
+                        
+                    });
+                })
+
 
             //Remove the marker from array.
             markers.splice(i, 1);
@@ -280,14 +300,24 @@ function reportButtonClicked() {
  * Upvote a hazard.
  */
 function upvotefun() {
-    upvotenumber += 1;
-    document.getElementById("upvote").innerHTML = upvotenumber;
+    let upvotenumber = doc.data().upvote;
+    upvotenumber++;
+    db.collection("hazards").doc(doc.id).update({
+        upvote: upvotenumber,
+        downvote: downvotenumber
+    });
+    document.getElementById("upvote").innerHTML = doc.data().upvote;
 };
 
 /**
  * Downvote a hazard.
  */
 function downvotefun() {
-    downvotenumber += 1;
-    document.getElementById("downvote").innerHTML = downvotenumber;
+    let downvotenumber = doc.data().downvote;
+    downvotenumber++;
+    db.collection("hazards").doc(doc.id).update({
+        upvote: upvotenumber,
+        downvote: downvotenumber
+    });   
+    document.getElementById("downvote").innerHTML = doc.data().downvote;
 };
