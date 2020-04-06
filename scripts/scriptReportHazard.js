@@ -10,11 +10,15 @@ function writeReport() {
             hazardType: hT,
             hazardDescription: hD,
             hazardUser: "John Doe",
+<<<<<<< HEAD
+            position: 
+=======
             upvote: 0,
             downvote:0,
             lat: passingmarkerlat,
             lng: passingmarkerlng,
             marker:true,
+>>>>>>> 23f3072ae2811149d149d6af4f8cc78480e8eff9
         }).then(function () {
             window.location.assign("map.html");
         })
@@ -27,7 +31,7 @@ function writeReport() {
         changes.forEach(function (change) {
             if (change.type == "added") {
                 console.log(change.doc.data());
-                //addMarker(change, map);
+                //addMarker(change.doc.data(), map);
             }
 
         })

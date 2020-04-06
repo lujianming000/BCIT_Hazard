@@ -71,14 +71,12 @@ function initialize() {
                 google.maps.event.addListener(marker, "click", function (e) {
                     var content = '<div id="iw-container">' +
                         '<div class="iw-title">' +
-                        '<div><p>Hazard Descriptions</p></div>' +
+                        '<div><p>Hazard</p></div>' +
                         '<img class="sign" src="images/snow.png">' +
                         '</div>' +
                         '<div class="iw-content">' +
-                        '<div class="iw-subTitle">Jimmy Reports</div>' +
-                        '<p>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
-                        '<div class="iw-subTitle">More Reports</div>' +
-                        '<br>Snow develops in clouds that themselves are part of a larger weather system. The physics of snow crystal development in clouds results from a complex set of variables that include moisture content and temperatures. The resulting shapes of the falling and fallen crystals can be classified into a number of basic shapes and combinations, thereof. Occasionally, some plate-like, dendritic and stellar-shaped snowflakes can form under clear sky with a very cold temperature inversion present.</p>' +
+                        '<div class="iw-subTitle">' + doc.data().hazardType + '</div>' +
+                        '<p>' + doc.data().hazardDescription + '</p>' +
                         '</div>' +
                         '</div>' +
                         '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
