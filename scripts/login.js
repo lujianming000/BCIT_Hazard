@@ -53,11 +53,13 @@ var uiConfig = {
             // The Firestore rules must allow the user to write. 
             //------------------------------------------------------------------------------------------
             var user = authResult.user;
+            localStorage.setItem('myUserId', user.uid);
             if (authResult.additionalUserInfo.isNewUser) {
                 db.collection("users").doc(user.uid).set({
                         name: user.displayName,
                         email: user.email
                     }).then(function () {
+                        // initUser(user.uid);
                         console.log("New user added to firestore");
                         window.location.assign("map.html");
                     })
@@ -65,6 +67,7 @@ var uiConfig = {
                         console.log("Error adding new user: " + error);
                     });
             } else {
+                // initUser(user.uid);
                 return true;
             }
             return false;

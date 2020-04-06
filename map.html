@@ -33,7 +33,7 @@
     
     <!--Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <a class="navbar-brand" href="#">BCIT Biking</a>
+        <a class="navbar-brand" href="#">BCIT Biking | Hi, <span id="welcomeUser"></span>!</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -119,6 +119,56 @@
     <!--report button -->
     <button type="button" id="report-btn" class="btn btn-danger btn-circle btn-xl">Report</button>
 
+    <!-- popup window-->
+    <form class="modal fade" id="reporthazard">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Hazard Information</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+
+
+                <!-- Modal body -->
+                <div class="modal-body">
+
+                    <div class="form-group">
+                        <label for="hazardType">Hazard Type</label>
+                        <select class="form-control" id="hazardType">
+                            <option value="snow">Snow</option>
+                            <option value="pothole">Pothole</option>
+                            <option value="construction">Construction</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+
+                    <form>
+                        <div class="form-group">
+                            <label for="message-text" class="col-form-label">Hazard Description</label>
+                            <textarea class="form-control" id="message-text"></textarea>
+                        </div>
+                    </form>
+
+                    <div>
+                        <label for="photoInput">Upload a Photo</label>
+                        <input type="file" class="form-control-file" id="photoInput">
+                    </div>
+
+                </div>
+
+
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <input type="submit" value="Submit">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+
+            </div>
+        </div>
+    </form>
 
     <!----------------------------------------->
     <!-- JS: Boostrap, Firebase, API related -->
@@ -157,6 +207,7 @@
     <script>
         //initialize google maps
         google.maps.event.addDomListener(window, 'load', initialize);
+        initUser();
     </script>
 
 </body>
