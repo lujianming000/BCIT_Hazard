@@ -15,7 +15,8 @@ var customStyle = [{
 var markers = [];
 var uniqueId = 1;
 
-let reportButtonClicked = false;
+let isReportButtonClicked = false;
+
 let selectedlat;
 let getid;
 
@@ -24,10 +25,14 @@ let user = {
     name: "anonymous user"
 };
 
+// variables - 'Report Hazard' information
+let reportHazardType = document.getElementById("hazardType");
+let reportHazardDescription = document.getElementById("hazardDescription");
+
 /**
  * Initialize Google Maps.
  */
-function initialize() {
+function initializeMap() {
     var BCIT = {
         lat: 49.2482,
         lng: -123
@@ -80,8 +85,8 @@ function initialize() {
 
                 var marker = new google.maps.Marker({
                     position: {
-                        lat: parseFloat(doc.data().lat),
-                        lng: parseFloat(doc.data().lng)
+                        lat: doc.data().lat,
+                        lng: doc.data().lng
                     },
                     map: map,
                 });
@@ -129,84 +134,116 @@ function initialize() {
             });
         })
 
-    document.getElementById("report-btn").onclick = reportClicked;
-
-    //TEST CODE - NEW VARIABLE FOR SAVING DATA LAT AND LNG
-    // var user = document.getElementById("welcomeUser").innerHTML;
-    var testDataJASON = {
-        sender: null,
-        lat: null,
-        lng: null
-    };
+    document.getElementById("report-btn").onclick = reportButtonClicked;
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
-        reportHazard(event.latLng);
+        // ~~~~~~~~~~~~~~
+        // ~~ OLD CODE ~~
+        // ~~~~~~~~~~~~~~
 
-        markerlat = event.latLng.lat();
-        markerlng = event.latLng.lng();
+        // mapClicked(event.latLng, map); // old test
 
-        localStorage.setItem('passinglat', markerlat);
-        localStorage.setItem('passinglng', markerlng);
+        // markerlat = event.latLng.lat();
+        // markerlng = event.latLng.lng();
 
-        //TEST CODE - NEW VARIABLE FOR SAVING DATA LAT AND LNG
-        testDataJASON.sender = user.name;
-        testDataJASON.lat = event.latLng.lat();
-        testDataJASON.lng = event.latLng.lng();
-        console.log(testDataJASON.sender);
-        console.log(testDataJASON.lat);
-        console.log(testDataJASON.lng);
+        // localStorage.setItem('passinglat', markerlat);
+        // localStorage.setItem('passinglng', markerlng);
+
+        // ~~~~~~~~~~~~~~
+        // ~~ NEW CODE ~~
+        // ~~~~~~~~~~~~~~
+        if (isReportButtonClicked) {
+            console.log("line 125 called: new portion of code");
+
+            //activate popup window // Get the modal: 'Report Hazard' pop-up window
+            $("#reportHazardWindow").modal();
+
+            // When the user cicks on 'Submit', make a new marker.
+            $("#submitReport").click(function () {
+                console.log("submit button clicked");
+
+                // create new hazard
+                createHazard(event.latLng, map);
+
+                //hide modal 
+                $("#reportHazardWindow").modal("hide");
+            });
+
+            isReportButtonClicked = false;
+        }
+
     });
+
+    // invoke custom style onto map
     map.set("styles", customStyle)
 }
 
-/**
- * 'Report' button is clicked.
- */
-function reportClicked() {
-    reportButtonClicked = true;
+// add new hazard to firebase 'hazards' collection
+function createHazard(location, map) {
+    db.collection("hazards").add({
+        sender: user.name,
+        email: user.email,
+        lat: location.lat(),
+        lng: location.lng(),
+        hazardType: reportHazardType.value,
+        hazardDescription: reportHazardDescription.value,
+        upvote: 0,
+        downvote: 0,
+        marker: true
+    });
 }
 
+// OLD - SHOULD NO LONGER NEED
 /**
  * Report a hazard.
  * @param {enum} location 
  */
-function reportHazard(location) {
-    if (reportButtonClicked) {
-        window.location.assign("reportHazard.html");
-        reportButtonClicked = false;
+function mapClicked(location, map) {
+    if (isReportButtonClicked) {
+        // window.location.assign("reportHazard.html"); //-> scriptReportHazard.js
+
+        console.log("mapClicked called"); // test
+        addMarker(location, map); // try: report to database with modal
     }
 }
 
 
-/**
- * Adds a hazard to the map.
- * @param {*} location location of click
- * @param {*} map to add
- */
-function addMarker(hazard, map) {
-    // Add the marker at the clicked location, and add the next-available label
-    // from the array of alphabetical characters.
-    var icon1 =
-        'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-    var marker = new google.maps.Marker({
-        position: hazard.position,
-        label: labels[labelIndex++ % labels.length],
-        map: map,
-        icon: icon1,
+// /**
+//  * Adds a hazard to the map.
+//  * @param {*} location location of click
+//  * @param {*} map to add
+//  */
+// function addMarker(hazard, map) {
+//     // Add the marker at the clicked location, and add the next-available label
+//     // from the array of alphabetical characters.
+//     // var icon1 =
+//     //     'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
+//     //  var   marker = new google.maps.Marker({
+//     //     position: hazard.position,
+//     //     // label: labels[labelIndex++ % labels.length],
+//     //     map: map,
+//     //     icon: icon1,
 
-    });
+//     // });
 
-    //activate popup window
-    //$("#reportHazard").modal();
+//     //activate popup window // Get the modal: 'Report Hazard' pop-up window
+//     $("#reportHazardWindow").modal();
 
-    /*$("#button1").click(function () {
-        $("#reportHazard").modal("hide");
-    });*/
-    //window.open("reportHazard.html");
+//     // When the user cicks on 'Submit', make a new marker.
+//     $("#testReport").click(function () {
+//         console.log("submit button clicked");
+//         // $("#reportHazardWindow").modal("hide"); //old
+//         let reportHazardType = document.getElementById("hazardType");
+//         let reportHazardDescription = document.getElementById("hazardDescription");
+//         console.log(reportHazardType.value);
+//         console.log(reportHazardDescription.value);
+//     });
 
-    reportButtonClicked = false;
-}
+//     // window.open("reportHazard.html"); //-> scriptReportHazard.js
+
+//     isReportButtonClicked = false;
+// }
 
 /**
  * Find and remove the hazard from the map.
@@ -257,12 +294,30 @@ function initUser() {
             document.getElementById("welcomeUser").innerHTML = user.name;
         } else {
             console.log("No such document!");
-            // navbar - put a welcome greeting to user: user is anonymous
+            // navbar - put a welcome greeting to anonymous user
             document.getElementById("welcomeUser").innerHTML = user.name;
         }
     }).catch(function (error) {
         console.log("Error getting document:", error);
     });
+}
+
+/**
+ * 'Report' button is clicked.
+ */
+function reportButtonClicked() {
+    isReportButtonClicked = true;
+
+    // TRYING: SWITCH BUTTON PURPOSE ('Report'/'Cancel Report')
+
+    // console.log("before:", isReportButtonClicked);
+    // isReportButtonClicked = !isReportButtonClicked; // true becomes false, false becomes true;
+    // console.log("after:", isReportButtonClicked);
+    // if (isReportButtonClicked) {
+    //     document.getElementById("report-btn").innerHTML = "Cancel Report";
+    // } else {
+    //     document.getElementById("report-btn").innerHTML = "Report";
+    // }
 }
 
 /**

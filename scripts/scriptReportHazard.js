@@ -1,25 +1,25 @@
 var passingmarkerlat = localStorage.getItem("passinglat");
 var passingmarkerlng = localStorage.getItem("passinglng");
 
-function writeReport() {
-    document.getElementById("reportHazard").addEventListener("submit", function (e) {
-        e.preventDefault();
-        let hT = document.getElementById("hazardType").value;
-        let hD = document.getElementById("hazardDescription").value;
-        db.collection("hazards").add({
-            hazardType: hT,
-            hazardDescription: hD,
-            hazardUser: "John Doe",
-            upvote: 0,
-            downvote:0,
-            lat: passingmarkerlat,
-            lng: passingmarkerlng,
-            marker:true,
-        }).then(function () {
-            window.location.assign("map.html");
-        })
-    })
-}
+// function writeReport() {
+//     document.getElementById("reportHazard").addEventListener("submit", function (e) {
+//         e.preventDefault();
+//         let hT = document.getElementById("hazardType").value;
+//         let hD = document.getElementById("hazardDescription").value;
+//         db.collection("hazards").add({
+//             hazardType: hT,
+//             hazardDescription: hD,
+//             hazardUser: "John Doe",
+//             upvote: 0,
+//             downvote: 0,
+//             lat: passingmarkerlat,
+//             lng: passingmarkerlng,
+//             marker: true,
+//         }).then(function () {
+//             window.location.assign("map.html");
+//         })
+//     })
+// }
 
 /*function showHazards() {
     db.collection("hazards").onSnapshot(function (snapshot) {
