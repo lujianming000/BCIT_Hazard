@@ -192,6 +192,7 @@ function createHazard(location, map) {
         downvote: 0,
         marker: true
     });
+    console.log("successfully added to firebase");
 }
 
 // OLD - SHOULD NO LONGER NEED
@@ -255,7 +256,7 @@ function DeleteMarker(id) {
         if (markers[i].id == id) {
             //Remove the marker from Map                 
             markers[i].setMap(null);
-            selectedlat = markers[i].getPosition().lat() + "";
+            selectedlat = markers[i].getPosition().lat();
 
             db.collection("hazards").where("lat", "==", selectedlat)
                 .get()
@@ -265,7 +266,6 @@ function DeleteMarker(id) {
                         db.collection("hazards").doc(doc.id).update({
                             marker: false
                         });
-
                         
                     });
                 })
