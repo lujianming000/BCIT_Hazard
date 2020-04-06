@@ -17,9 +17,13 @@ var markers = [];
 var uniqueId = 1;
 
 let reportButtonClicked = false;
+let selectedlat;
+let getid;
 
-
-let user = {email: null, name: "anonymous user"};
+let user = {
+    email: null,
+    name: "anonymous user"
+};
 
 /**
  * Initialize Google Maps.
@@ -51,7 +55,10 @@ function initialize() {
         .then(function (querySnapshot) {
             querySnapshot.forEach(function (doc) {
                 var marker = new google.maps.Marker({
-                    position: {lat: parseFloat(doc.data().lat), lng: parseFloat(doc.data().lng)},
+                    position: {
+                        lat: parseFloat(doc.data().lat),
+                        lng: parseFloat(doc.data().lng)
+                    },
                     map: map,
                 });
                 marker.setMap(map);
@@ -92,6 +99,7 @@ function initialize() {
                         maxWidth: 350
                     });
                     InfoWindow.open(map, marker);
+
                 });
             });
         })
@@ -100,7 +108,11 @@ function initialize() {
 
     //TEST CODE - NEW VARIABLE FOR SAVING DATA LAT AND LNG
     // var user = document.getElementById("welcomeUser").innerHTML;
-    var testDataJASON = {sender:null, lat: null, lng: null};
+    var testDataJASON = {
+        sender: null,
+        lat: null,
+        lng: null
+    };
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
@@ -108,7 +120,7 @@ function initialize() {
 
         markerlat = event.latLng.lat();
         markerlng = event.latLng.lng();
-        
+
         localStorage.setItem('passinglat', markerlat);
         localStorage.setItem('passinglng', markerlng);
 
@@ -152,7 +164,7 @@ function addMarker(hazard, map) {
     // from the array of alphabetical characters.
     var icon1 =
         'https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png';
-     var   marker = new google.maps.Marker({
+    var marker = new google.maps.Marker({
         position: hazard.position,
         label: labels[labelIndex++ % labels.length],
         map: map,
@@ -179,12 +191,25 @@ function DeleteMarker(id) {
     //Find and remove the marker from the Array
     for (var i = 0; i < markers.length; i++) {
         if (markers[i].id == id) {
-            //Remove the marker from Map                  
+            //Remove the marker from Map                 
             markers[i].setMap(null);
-            
+            selectedlat = markers[i].getPosition().lat() + "";
+
+            db.collection("hazards").where("lat", "==", selectedlat)
+                .get()
+                .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                        getid = doc.id
+                        console.log(doc.data().lat)
+                        console.log(getid);
+                        // doc.data().marker = false  not working
+                    });
+                })
+    
+
             //Remove the marker from array.
             markers.splice(i, 1);
-
+            
             return;
         }
     }
@@ -196,9 +221,9 @@ function DeleteMarker(id) {
 function initUser() {
     var myUserId = localStorage.getItem('myUserId');
     var docRef = db.collection("users").doc(myUserId);
-    docRef.get().then(function(doc) {
+    docRef.get().then(function (doc) {
         if (doc.exists) {
-            user.name =  doc.data().name;
+            user.name = doc.data().name;
             user.email = doc.data().email;
             console.log("Document data: ", doc.data());
             // navbar - put a welcome greeting to user
@@ -208,7 +233,7 @@ function initUser() {
             // navbar - put a welcome greeting to user: user is anonymous
             document.getElementById("welcomeUser").innerHTML = user.name;
         }
-    }).catch(function(error) {
+    }).catch(function (error) {
         console.log("Error getting document:", error);
     });
 }
