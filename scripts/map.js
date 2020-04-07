@@ -3,6 +3,8 @@ var markerLat;
 var markerLng;
 var markerType;
 var markerDescription;
+var markerup;
+var markerdown;
 
 var labelIndex = 0;
 var customStyle = [{
@@ -54,19 +56,51 @@ function initializeMap() {
         }
     });
 
-    var BikePath = [
-        {lat: 49.254379443332255, lng: -123.00420298283386},
-        {lat: 49.25179494593293, lng: -123.00413324539947},
-        {lat: 49.25175993043178, lng: -122.99969150727081},
-        {lat: 49.25179494593293, lng: -123.00413324539947},
-        {lat: 49.247841007021364, lng: -123.00411715214538},
-        {lat: 49.24588215594371, lng: -123.00293818296315},
-        {lat: 49.243050272110736, lng: -123.00280823414612},
-        {lat: 49.24167740274324, lng: -122.99817337696838},
-        {lat: 49.25025593625811, lng: -122.99828254167252},
-        {lat: 49.25181560977754, lng: -122.99530194592559},
-        {lat: 49.254034441825574, lng: -122.99379933154079},
-      ];
+    var BikePath = [{
+            lat: 49.254379443332255,
+            lng: -123.00420298283386
+        },
+        {
+            lat: 49.25179494593293,
+            lng: -123.00413324539947
+        },
+        {
+            lat: 49.25175993043178,
+            lng: -122.99969150727081
+        },
+        {
+            lat: 49.25179494593293,
+            lng: -123.00413324539947
+        },
+        {
+            lat: 49.247841007021364,
+            lng: -123.00411715214538
+        },
+        {
+            lat: 49.24588215594371,
+            lng: -123.00293818296315
+        },
+        {
+            lat: 49.243050272110736,
+            lng: -123.00280823414612
+        },
+        {
+            lat: 49.24167740274324,
+            lng: -122.99817337696838
+        },
+        {
+            lat: 49.25025593625811,
+            lng: -122.99828254167252
+        },
+        {
+            lat: 49.25181560977754,
+            lng: -122.99530194592559
+        },
+        {
+            lat: 49.254034441825574,
+            lng: -122.99379933154079
+        },
+    ];
 
     var BikeRoute = new google.maps.Polyline({
         path: BikePath,
@@ -74,7 +108,7 @@ function initializeMap() {
         strokeColor: '#FF0000',
         strokeOpacity: 1.0,
         strokeWeight: 2
-      });
+    });
 
     BikeRoute.setMap(map);
 
@@ -86,8 +120,11 @@ function initializeMap() {
                 markerLng = doc.data().lng;
                 markerType = doc.data().hazardType;
                 markerDescription = doc.data().hazardDescription;
+                markerup = doc.data().upvote;
+                markerdown = doc.data().downvote;
 
                 addMarkerToMap(map);
+                
             });
         })
 
@@ -122,6 +159,8 @@ function createHazard(location, map) {
     markerLng = location.lng();
     markerType = reportHazardType.value;
     markerDescription = reportHazardDescription.value;
+    markerup = 0;
+    markerdown = 0;
 
     db.collection("hazards").add({
         sender: user.name,
@@ -130,8 +169,8 @@ function createHazard(location, map) {
         lng: markerLng,
         hazardType: markerType,
         hazardDescription: markerDescription,
-        upvote: 0,
-        downvote: 0,
+        upvote: markerup,
+        downvote: markerdown,
         marker: true
     });
 
@@ -155,11 +194,11 @@ function addMarkerToMap(map) {
 
 
     google.maps.event.addListener(marker, "click", function (e) {
-        
+
         var content = '<div id="iw-container">' +
             '<div class="iw-title">' +
-            '<div><p>Hazard</p></div>' +
-            '<img class="sign" src="images/snow.png">' +
+            '<div><p>' + markerType + '</p></div>' +
+            '<img class="sign" src="images/'+ markerType + '.png">' +
             '</div>' +
             '<div class="iw-content">' +
             '<div class="iw-subTitle">' + markerType + '</div>' +
@@ -167,10 +206,10 @@ function addMarkerToMap(map) {
             '</div>' +
             '</div>' +
             '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
-            '<img class="sign" src="images/upvote.png" onclick="upvotefun();">' +
-            '<p id="upvote" style="font-size: 20px; padding-left:10px;">0</p>' +
-            '<img class="sign" src="images/downvote.png" onclick="downvotefun();">' +
-            '<p id="downvote" style="font-size: 20px;  padding-left:10px;">0</p>' +
+            '<img class="sign" src="images/upvote.png" onclick="upvotefun(' + marker.id + ');">' +
+            '<p id="upvote" style="font-size: 20px; padding-left:10px;"> ' + markerup + '</p>' +
+            '<img class="sign" src="images/downvote.png" onclick="downvotefun(' + marker.id + ');">' +
+            '<p id="downvote" style="font-size: 20px;  padding-left:10px;">' + markerdown + '</p>' +
             '</div>';
         content +=
             '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
@@ -181,7 +220,7 @@ function addMarkerToMap(map) {
 
         var InfoWindow = new google.maps.InfoWindow({
             content: content,
-            maxWidth: 350
+            minWidth: 400
         });
         InfoWindow.open(map, marker);
 
@@ -264,25 +303,53 @@ function reportButtonClicked() {
 /**
  * Upvote a hazard.
  */
-function upvotefun() {
-    let upvotenumber = doc.data().upvote;
-    upvotenumber++;
-    db.collection("hazards").doc(doc.id).update({
-        upvote: upvotenumber,
-        downvote: downvotenumber
-    });
-    document.getElementById("upvote").innerHTML = doc.data().upvote;
-};
+function upvotefun(id) {
+    for (var i = 0; i < markers.length; i++) {
+        if (markers[i].id == id) {
+            //Remove the marker from Map                          
+            selectedlat = markers[i].getPosition().lat();
 
+            db.collection("hazards").where("lat", "==", selectedlat)
+                .get()
+                .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                        markerup = doc.data().upvote;
+                        markerup++;
+                        db.collection("hazards").doc(doc.id).update({
+                            upvote: markerup,
+                        });
+                        document.getElementById("upvote").innerHTML = doc.data().upvote;
+                    });
+                })
+
+            console.log(markerup);
+
+        };
+    }
+}
 /**
  * Downvote a hazard.
  */
-function downvotefun() {
-    let downvotenumber = doc.data().downvote;
-    downvotenumber++;
-    db.collection("hazards").doc(doc.id).update({
-        upvote: upvotenumber,
-        downvote: downvotenumber
-    });   
-    document.getElementById("downvote").innerHTML = doc.data().downvote;
-};
+function downvotefun(id) {
+    for (var i = 0; i < markers.length; i++) {
+        if (markers[i].id == id) {
+            //Remove the marker from Map                          
+            selectedlat = markers[i].getPosition().lat();
+            
+            db.collection("hazards").where("lat", "==", selectedlat)
+                .get()
+                .then(function (querySnapshot) {
+                    querySnapshot.forEach(function (doc) {
+                        markerdown = doc.data().downvote;
+                        markerdown++;
+                        db.collection("hazards").doc(doc.id).update({
+                            downvote: markerdown,
+                        });
+                        document.getElementById("downvote").innerHTML = doc.data().downvote;
+                    });
+                })
+
+           
+        }
+    }
+}
