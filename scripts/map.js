@@ -50,6 +50,7 @@ function initializeMap() {
         zoom: 17,
         minZoom: 15.8,
         center: BCIT,
+        fullscreenControl: false,
         restriction: {
             latLngBounds: BCIT_BOUNDS,
             strictBounds: false
@@ -112,23 +113,6 @@ function initializeMap() {
 
     BikeRoute.setMap(map);
 
-    /*
-    db.collection("hazards").where("marker", "==", true)
-        .get()
-        .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-                markerLat = doc.data().lat;
-                markerLng = doc.data().lng;
-                markerType = doc.data().hazardType;
-                markerDescription = doc.data().hazardDescription;
-                markerup = doc.data().upvote;
-                markerdown = doc.data().downvote;
-
-                addMarkerToMap(map);
-                
-            });
-        })
-        */
 
        db.collection("hazards").onSnapshot(function (snapshot) {
         changes = snapshot.docChanges();
@@ -161,7 +145,8 @@ function initializeMap() {
                 $("#reportHazardWindow").modal("hide");
             });
 
-            isReportButtonClicked = false;
+            cancelButtonClicked();
+
         }
     });
 
@@ -192,6 +177,7 @@ function addMarkerToMap(info, map) {
             lng: info.lng
         },
         map: map,
+
     });
     marker.setMap(map);
 
