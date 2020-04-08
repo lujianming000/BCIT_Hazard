@@ -1,7 +1,4 @@
-#map {
-    height: 100%;
-}
-
+/** browser. */
 html,
 body {
     height: 100%;
@@ -9,8 +6,22 @@ body {
     padding: 0;
 }
 
+/** browser navbar */
+#navbar{
+    z-index: 1;
+    width:100%;
+    height:7%;
+}
 
-.btn-circle.btn-xl {
+/** google maps. */
+#map {
+    height: 93%;
+}
+
+/** 'Report Hazard' button. */
+#report-btn {
+    left: 5vw;
+    top: 85vh;
     width: 70px;
     height: 70px;
     padding: 10px 16px;
@@ -22,10 +33,13 @@ body {
     border-color: #ED552A;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-    visibility: visible;
+
 }
 
-.btn-circle.btn-x2 {
+/** 'Cancel Report' button. */
+#cancel-btn {
+    left: 5vw;
+    top: 85vh;
     width: 70px;
     height: 70px;
     padding: 10px 16px;
@@ -33,42 +47,17 @@ body {
     font-size: 12px;
     text-align: center;
     position: fixed;
-    background-color: #ED553B;
+    background-color: #ca4a34;
     border-color: maroon;
     color: white;
     font-family: Arial, Helvetica, sans-serif;
-    visibility: visible;
-}
-
-#report-btn {
-    left: 5vw;
-    top: 85vh;
-}
-
-#cancel-btn{
-    left: 5vw;
-    top:85vh;
     display: none;
 }
 
-.sign {
-    width: 40px;
-    height: 40px;
-}
-
-/* infowinfow */
+/** Hazard info winfow styling.
+ *  all iw-xxxxx elements are for Hazard info window. */
 #iw-container {
     margin-bottom: 10px;
-}
-
-#navbar{
-    z-index: 1;
-    width:100%;
-    height:7%;
-}
-
-#map{
-    height: 93%;
 }
 
 #iw-container .iw-title {
@@ -101,8 +90,6 @@ body {
     padding: 5px 0;
 }
 
-
-
 .iw-bottom-gradient {
     position: absolute;
     width: 326px;
@@ -113,4 +100,11 @@ body {
     background: -webkit-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
     background: -moz-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
     background: -ms-linear-gradient(top, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 100%);
+}
+
+/** Hazard info window styling
+ *  upvote/downvote signs. */
+.sign {
+    width: 40px;
+    height: 40px;
 }

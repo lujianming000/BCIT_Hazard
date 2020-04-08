@@ -1,13 +1,8 @@
-// In the following example, markers appear when the user clicks on the map.
-var markerLat;
-var markerLng;
-var markerType;
-var markerDescription;
-var markerup;
-var markerdown;
-var refID;
+// ------------------------
+// variables
+// ------------------------
 
-var labelIndex = 0;
+// Google Maps custom style
 var customStyle = [{
     featureType: "poi",
     elementType: "labels",
@@ -16,23 +11,29 @@ var customStyle = [{
     }]
 }];
 
+// Hazard information (and Google Maps Markers)
 var markers = [];
 var uniqueId = 1;
+var refId;
+// information to collect from 'Report Hazard' info window
+var reportHazardType = document.getElementById("hazardType");
+var reportHazardDescription = document.getElementById("hazardDescription");
 
-let isReportButtonClicked = false;
-
-
-let selectedlat;
-let getid;
-
-let user = {
+// initialized user from login
+var user = {
     email: null,
     name: "anonymous user"
 };
 
-// variables - 'Report Hazard' information
-let reportHazardType = document.getElementById("hazardType");
-let reportHazardDescription = document.getElementById("hazardDescription");
+// report button
+var isReportButtonClicked = false;
+
+
+
+
+// ------------------------
+// functions 
+// ------------------------
 
 /**
  * Initialize Google Maps.
@@ -182,7 +183,7 @@ function createHazard(location) {
 
 /**
  * Adds a marker using the information from the database to the map.
- * @param {object} docID document id of hazard from db
+ * @param {string} docID document id of hazard from db
  * @param {object} info hazard from db to add to map
  * @param {object} map the map
  */
@@ -215,18 +216,18 @@ function addMarkerToMap(docID, info, map) {
             '<p>' + info.hazardDescription + '</p>' +
             '</div>' +
             '</div>' +
-            '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
+            '<div class="modal-footer" style="display: flex; justify-content: space-around;">' +
             '<img class="sign" src="images/upvote.png" onclick="upvoteHazard();">' +
-            '<p id="upvote' + docID + '" style="font-size: 20px; padding-left:10px;"> ' + info.upvote + '</p>' +
+            '<p id="upvote' + docID + '" style="font-size: 20px;  padding-right:10px;"> ' + info.upvote + '</p>' +
             '<img class="sign" src="images/downvote.png" onclick="downvoteHazard();">' +
-            '<p id="downvote' + docID + '" style="font-size: 20px;  padding-left:10px;">' + info.downvote + '</p>' +
+            '<p id="downvote' + docID + '" style="font-size: 20px;">' + info.downvote + '</p>' +
             '</div>';
         
         // display 'Delete' button only if you are the user that created this hazard
         if (info.email == user.email) {
             content +=
                 '<div class="modal-footer" style="display:flex ; justify-content: space-around;">' +
-                '<button type="button" class="btn btn-secondary" style="text-align:center;" value="Delete" onclick="deleteHazard(' +
+                '<button type="button" class="btn btn-secondary" style="text-align:center;" onclick="deleteHazard(' +
                 marker.id + ');">Delete</button>' +
                 '</div>';
         }
@@ -236,7 +237,7 @@ function addMarkerToMap(docID, info, map) {
             minWidth: 400
         });
         InfoWindow.open(map, marker);
-        refID = docID;
+        refId = docID;
     });
 
 }
@@ -290,13 +291,13 @@ function upvoteHazard() {
     firebase.auth().onAuthStateChanged(function () {
         var incByOne = firebase.firestore.FieldValue.increment(1);
 
-        db.collection("hazards").doc(refID).update({
+        db.collection("hazards").doc(refId).update({
             upvote: incByOne
         })
     });
-    var upvoteNum = parseInt(document.getElementById("upvote" + refID).innerHTML);
+    var upvoteNum = parseInt(document.getElementById("upvote" + refId).innerHTML);
     upvoteNum++;
-    document.getElementById("upvote" + refID).innerHTML = upvoteNum;
+    document.getElementById("upvote" + refId).innerHTML = upvoteNum;
 }
 
 /**
@@ -307,13 +308,13 @@ function downvoteHazard() {
     firebase.auth().onAuthStateChanged(function () {
         var incByOne = firebase.firestore.FieldValue.increment(1);
 
-        db.collection("hazards").doc(refID).update({
+        db.collection("hazards").doc(refId).update({
             downvote: incByOne
         })
     });
-    var downvoteNum = parseInt(document.getElementById("downvote" + refID).innerHTML);
+    var downvoteNum = parseInt(document.getElementById("downvote" + refId).innerHTML);
     downvoteNum++;
-    document.getElementById("downvote" + refID).innerHTML = downvoteNum;
+    document.getElementById("downvote" + refId).innerHTML = downvoteNum;
 }
 
 /**
@@ -321,7 +322,7 @@ function downvoteHazard() {
  * @param {number} id marker to delete
  */
 function deleteHazard(id) {
-    db.collection("hazards").doc(refID).delete().then(function () {
+    db.collection("hazards").doc(refId).delete().then(function () {
         console.log("Document successfully deleted!");
     }).catch(function (error) {
         console.error("Error removing document: ", error);

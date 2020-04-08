@@ -1,4 +1,4 @@
-// variable initialization - default style for google maps
+// variables - Google Maps custom style
 var customStyle = [{
     featureType: "poi",
     elementType: "labels",
