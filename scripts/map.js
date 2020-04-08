@@ -114,7 +114,7 @@ function initializeMap() {
     BikeRoute.setMap(map);
 
 
-       db.collection("hazards").onSnapshot(function (snapshot) {
+    db.collection("hazards").onSnapshot(function (snapshot) {
         changes = snapshot.docChanges();
         changes.forEach(function (change) {
             if (change.type == "added") {
@@ -170,6 +170,11 @@ function createHazard(location) {
     });
 }
 
+/**
+ * Adds a marker using the information from the database to the map.
+ * @param {object} info hazard from db to add to map
+ * @param {object} map the map
+ */
 function addMarkerToMap(info, map) {
     var marker = new google.maps.Marker({
         position: {
@@ -192,7 +197,7 @@ function addMarkerToMap(info, map) {
         var content = '<div id="iw-container">' +
             '<div class="iw-title">' +
             '<div><p>' + info.hazardType + '</p></div>' +
-            '<img class="sign" src="images/'+ info.hazardType + '.png">' +
+            '<img class="sign" src="images/' + info.hazardType + '.png">' +
             '</div>' +
             '<div class="iw-content">' +
             '<div class="iw-subTitle">' + info.hazardType + '</div>' +
@@ -277,14 +282,17 @@ function initUser() {
 }
 
 /**
- * 'Report' button is clicked.
+ * 'Report' button is clicked to activate report feature.
  */
 function reportButtonClicked() {
-        isReportButtonClicked = true;
-        document.getElementById("cancel-btn").style.display = "inline";
-        document.getElementById("report-btn").style.display = "none";
+    isReportButtonClicked = true;
+    document.getElementById("cancel-btn").style.display = "inline";
+    document.getElementById("report-btn").style.display = "none";
 }
 
+/**
+ * 'Report' button is clicked to deactivate report feature.
+ */
 function cancelButtonClicked() {
     isReportButtonClicked = false;
     document.getElementById("report-btn").style.display = "inline";
@@ -325,7 +333,7 @@ function downvotefun(id) {
         if (markers[i].id == id) {
             //Remove the marker from Map                          
             selectedlat = markers[i].getPosition().lat();
-            
+
             db.collection("hazards").where("lat", "==", selectedlat)
                 .get()
                 .then(function (querySnapshot) {
@@ -339,7 +347,7 @@ function downvotefun(id) {
                     });
                 })
 
-           
+
         }
     }
 }
