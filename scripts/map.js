@@ -127,7 +127,7 @@ function initializeMap() {
                 console.log("Modified hazard: ", change.doc.id + " -> " + change.doc.data());
             }
             if (change.type == "removed") {
-                console.log("Removed hazard: ", change.doc.id + " -> " + change.doc.date());
+                console.log("Removed hazard: ", change.doc.id + " -> " + change.doc.data());
             }
         })
     })
