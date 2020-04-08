@@ -112,6 +112,7 @@ function initializeMap() {
 
     BikeRoute.setMap(map);
 
+    /*
     db.collection("hazards").where("marker", "==", true)
         .get()
         .then(function (querySnapshot) {
@@ -127,7 +128,21 @@ function initializeMap() {
                 
             });
         })
+        */
 
+       db.collection("hazards").onSnapshot(function (snapshot) {
+        changes = snapshot.docChanges();
+        changes.forEach(function (change) {
+            if (change.type == "added") {
+                console.log(change.doc.data());
+                addMarkerToMap(change.doc.data(), map);
+            }
+            if (change.type == "modified") {
+                console.log("vote");
+            }
+
+        })
+    })
     document.getElementById("report-btn").onclick = reportButtonClicked;
 
     // This event listener calls addMarker() when the map is clicked.
@@ -139,7 +154,7 @@ function initializeMap() {
             // When the user cicks on 'Submit', make a new marker.
             $("#submitReport").click(function () {
                 // create new hazard
-                createHazard(event.latLng, map);
+                createHazard(event.latLng);
 
                 //hide modal 
                 $("#reportHazardWindow").modal("hide");
@@ -154,34 +169,26 @@ function initializeMap() {
 }
 
 // add new hazard to firebase 'hazards' collection
-function createHazard(location, map) {
-    markerLat = location.lat();
-    markerLng = location.lng();
-    markerType = reportHazardType.value;
-    markerDescription = reportHazardDescription.value;
-    markerup = 0;
-    markerdown = 0;
+function createHazard(location) {
 
     db.collection("hazards").add({
         sender: user.name,
         email: user.email,
-        lat: markerLat,
-        lng: markerLng,
-        hazardType: markerType,
-        hazardDescription: markerDescription,
-        upvote: markerup,
-        downvote: markerdown,
+        lat: location.lat(),
+        lng: location.lng(),
+        hazardType: reportHazardType.value,
+        hazardDescription: reportHazardDescription.value,
+        upvote: 0,
+        downvote: 0,
         marker: true
     });
-
-    addMarkerToMap(map);
 }
 
-function addMarkerToMap(map) {
+function addMarkerToMap(info, map) {
     var marker = new google.maps.Marker({
         position: {
-            lat: markerLat,
-            lng: markerLng
+            lat: info.lat,
+            lng: info.lng
         },
         map: map,
     });
@@ -197,19 +204,19 @@ function addMarkerToMap(map) {
 
         var content = '<div id="iw-container">' +
             '<div class="iw-title">' +
-            '<div><p>' + markerType + '</p></div>' +
-            '<img class="sign" src="images/'+ markerType + '.png">' +
+            '<div><p>' + info.hazardType + '</p></div>' +
+            '<img class="sign" src="images/'+ info.hazardType + '.png">' +
             '</div>' +
             '<div class="iw-content">' +
-            '<div class="iw-subTitle">' + markerType + '</div>' +
-            '<p>' + markerDescription + '</p>' +
+            '<div class="iw-subTitle">' + info.hazardType + '</div>' +
+            '<p>' + info.hazardDescription + '</p>' +
             '</div>' +
             '</div>' +
             '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
             '<img class="sign" src="images/upvote.png" onclick="upvotefun(' + marker.id + ');">' +
-            '<p id="upvote" style="font-size: 20px; padding-left:10px;"> ' + markerup + '</p>' +
+            '<p id="upvote" style="font-size: 20px; padding-left:10px;"> ' + info.upvote + '</p>' +
             '<img class="sign" src="images/downvote.png" onclick="downvotefun(' + marker.id + ');">' +
-            '<p id="downvote" style="font-size: 20px;  padding-left:10px;">' + markerdown + '</p>' +
+            '<p id="downvote" style="font-size: 20px;  padding-left:10px;">' + info.downvote + '</p>' +
             '</div>';
         content +=
             '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +

@@ -21,19 +21,18 @@
 //     })
 // }
 
-/*function showHazards() {
     db.collection("hazards").onSnapshot(function (snapshot) {
         changes = snapshot.docChanges();
         changes.forEach(function (change) {
             if (change.type == "added") {
                 console.log(change.doc.data());
-                //addMarker(change.doc.data(), map);
+                addMarkerToMap(change.doc.data(), map);
             }
 
         })
     })
-}
-*/
+
+
 
 // function addHazardToMap(hazard) {
 
