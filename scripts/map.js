@@ -144,6 +144,7 @@ function initializeMap() {
         })
     })
     document.getElementById("report-btn").onclick = reportButtonClicked;
+    document.getElementById("cancel-btn").onclick = cancelButtonClicked;
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
@@ -293,20 +294,16 @@ function initUser() {
  * 'Report' button is clicked.
  */
 function reportButtonClicked() {
-    isReportButtonClicked = true;
-
-    // TRYING: SWITCH BUTTON PURPOSE ('Report'/'Cancel Report')
-
-    // console.log("before:", isReportButtonClicked);
-    // isReportButtonClicked = !isReportButtonClicked; // true becomes false, false becomes true;
-    // console.log("after:", isReportButtonClicked);
-    // if (isReportButtonClicked) {
-    //     document.getElementById("report-btn").innerHTML = "Cancel Report";
-    // } else {
-    //     document.getElementById("report-btn").innerHTML = "Report";
-    // }
+        isReportButtonClicked = true;
+        document.getElementById("cancel-btn").style.display = "inline";
+        document.getElementById("report-btn").style.display = "none";
 }
 
+function cancelButtonClicked() {
+    isReportButtonClicked = false;
+    document.getElementById("report-btn").style.display = "inline";
+    document.getElementById("cancel-btn").style.display = "none";
+}
 /**
  * Upvote a hazard.
  */
