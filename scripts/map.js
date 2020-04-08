@@ -60,7 +60,7 @@ function initializeMap() {
         }
     });
 
-    var BikePath = [{
+    var bikePaths = [{
             lat: 49.254379443332255,
             lng: -123.00420298283386
         },
@@ -106,15 +106,13 @@ function initializeMap() {
         },
     ];
 
-    var BikeRoute = new google.maps.Polyline({
-        path: BikePath,
+    var bikeRoute = new google.maps.Polyline({
+        path: bikePaths,
         geodesic: true,
         strokeColor: '#FF0000',
         strokeOpacity: 1.0,
         strokeWeight: 2
     });
-
-    BikeRoute.setMap(map);
 
 
     db.collection("hazards").onSnapshot(function (snapshot) {
@@ -158,6 +156,7 @@ function initializeMap() {
 
     // invoke custom style onto map
     map.set("styles", customStyle)
+    bikeRoute.setMap(map);
 }
 
 // add new hazard to firebase 'hazards' collection
