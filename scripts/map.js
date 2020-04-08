@@ -52,6 +52,7 @@ function initializeMap() {
         zoom: 17,
         minZoom: 15.8,
         center: BCIT,
+        fullscreenControl: false,
         restriction: {
             latLngBounds: BCIT_BOUNDS,
             strictBounds: false
@@ -114,23 +115,6 @@ function initializeMap() {
 
     BikeRoute.setMap(map);
 
-    /*
-    db.collection("hazards").where("marker", "==", true)
-        .get()
-        .then(function (querySnapshot) {
-            querySnapshot.forEach(function (doc) {
-                markerLat = doc.data().lat;
-                markerLng = doc.data().lng;
-                markerType = doc.data().hazardType;
-                markerDescription = doc.data().hazardDescription;
-                markerup = doc.data().upvote;
-                markerdown = doc.data().downvote;
-
-                addMarkerToMap(map);
-                
-            });
-        })
-        */
 
     db.collection("hazards").onSnapshot(function (snapshot) {
         changes = snapshot.docChanges();
@@ -149,6 +133,7 @@ function initializeMap() {
     })
 
     document.getElementById("report-btn").onclick = reportButtonClicked;
+    document.getElementById("cancel-btn").onclick = cancelButtonClicked;
 
     // This event listener calls addMarker() when the map is clicked.
     google.maps.event.addListener(map, 'click', function (event) {
@@ -165,7 +150,8 @@ function initializeMap() {
                 $("#reportHazardWindow").modal("hide");
             });
 
-            isReportButtonClicked = false;
+            cancelButtonClicked();
+
         }
     });
 
@@ -194,6 +180,12 @@ function createHazard(location) {
         });
 }
 
+/**
+ * Adds a marker using the information from the database to the map.
+ * @param {object} docID document id of hazard from db
+ * @param {object} info hazard from db to add to map
+ * @param {object} map the map
+ */
 function addMarkerToMap(docID, info, map) {
     var marker = new google.maps.Marker({
         position: {
@@ -201,6 +193,7 @@ function addMarkerToMap(docID, info, map) {
             lng: info.lng
         },
         map: map,
+
     });
     marker.setMap(map);
 
@@ -272,12 +265,21 @@ function initUser() {
 }
 
 /**
- * 'Report' button is clicked.
- * This will fulfill a conditional to allow the user to click on the map
- * to report a hazard at their clicked position.
+ * 'Report' button is clicked to activate report feature.
  */
 function reportButtonClicked() {
     isReportButtonClicked = true;
+    document.getElementById("cancel-btn").style.display = "inline";
+    document.getElementById("report-btn").style.display = "none";
+}
+
+/**
+ * 'Report' button is clicked to deactivate report feature.
+ */
+function cancelButtonClicked() {
+    isReportButtonClicked = false;
+    document.getElementById("report-btn").style.display = "inline";
+    document.getElementById("cancel-btn").style.display = "none";
 }
 
 /**
@@ -298,7 +300,7 @@ function upvoteHazard() {
 }
 
 /**
- * Downvote a hazard
+ * Downvote a hazard.
  * This happens when the 'downvote' sign on a hazard info window is clicked.
  */
 function downvoteHazard() {
@@ -316,7 +318,7 @@ function downvoteHazard() {
 
 /**
  * Find and remove the hazard from the map.
- * @param {number} id   marker to delete
+ * @param {number} id marker to delete
  */
 function deleteHazard(id) {
     db.collection("hazards").doc(refID).delete().then(function () {

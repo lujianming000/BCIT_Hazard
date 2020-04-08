@@ -32,8 +32,9 @@
     <!------------------>
     
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <nav id = "navbar" class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">BCIT Biking | Hi, <span id="welcomeUser"></span>!</a>
+<<<<<<< HEAD
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
             aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -62,14 +63,19 @@
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
             </form>
         </div>
+=======
+>>>>>>> c8bd4ac2489d2d4e0484edfe5f181dd7061e79d0
     </nav>
     <!--/.Navbar -->
 
     <!-- Google Map -->
-    <div id="map"></div>
+    <div id="map">
+    </div>
+
 
     <!-- report button -->
     <button type="button" id="report-btn" class="btn btn-danger btn-circle btn-xl">Report</button>
+    <button type="button" id="cancel-btn" class="btn btn-warning btn-circle btn-x2">Report</button>
 
     <!-- popup window for Hazard Information -->
     <form class="modal fade" id="reportHazardWindow"  onsubmit="return false">

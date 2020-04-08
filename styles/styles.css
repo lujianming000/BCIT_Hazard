@@ -25,9 +25,30 @@ body {
     visibility: visible;
 }
 
+.btn-circle.btn-x2 {
+    width: 70px;
+    height: 70px;
+    padding: 10px 16px;
+    border-radius: 35px;
+    font-size: 12px;
+    text-align: center;
+    position: fixed;
+    background-color: #ED553B;
+    border-color: maroon;
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+    visibility: visible;
+}
+
 #report-btn {
     left: 5vw;
     top: 85vh;
+}
+
+#cancel-btn{
+    left: 5vw;
+    top:85vh;
+    display: none;
 }
 
 .sign {
@@ -38,6 +59,16 @@ body {
 /* infowinfow */
 #iw-container {
     margin-bottom: 10px;
+}
+
+#navbar{
+    z-index: 1;
+    width:100%;
+    height:7%;
+}
+
+#map{
+    height: 93%;
 }
 
 #iw-container .iw-title {
