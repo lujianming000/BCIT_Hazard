@@ -5,6 +5,7 @@ var markerType;
 var markerDescription;
 var markerup;
 var markerdown;
+var refID;
 
 var labelIndex = 0;
 var customStyle = [{
@@ -19,6 +20,7 @@ var markers = [];
 var uniqueId = 1;
 
 let isReportButtonClicked = false;
+
 
 let selectedlat;
 let getid;
@@ -130,19 +132,22 @@ function initializeMap() {
         })
         */
 
-       db.collection("hazards").onSnapshot(function (snapshot) {
+    db.collection("hazards").onSnapshot(function (snapshot) {
         changes = snapshot.docChanges();
         changes.forEach(function (change) {
             if (change.type == "added") {
-                console.log(change.doc.data());
-                addMarkerToMap(change.doc.data(), map);
+                console.log("New hazard: ", change.doc.id + " -> " + change.doc.data());
+                addMarkerToMap(change.doc.id, change.doc.data(), map);
             }
             if (change.type == "modified") {
-                console.log("vote");
+                console.log("Modified hazard: ", change.doc.id + " -> " + change.doc.data());
             }
-
+            if (change.type == "removed") {
+                console.log("Removed hazard: ", change.doc.id + " -> " + change.doc.date());
+            }
         })
     })
+
     document.getElementById("report-btn").onclick = reportButtonClicked;
 
     // This event listener calls addMarker() when the map is clicked.
@@ -172,19 +177,24 @@ function initializeMap() {
 function createHazard(location) {
 
     db.collection("hazards").add({
-        sender: user.name,
-        email: user.email,
-        lat: location.lat(),
-        lng: location.lng(),
-        hazardType: reportHazardType.value,
-        hazardDescription: reportHazardDescription.value,
-        upvote: 0,
-        downvote: 0,
-        marker: true
-    });
+            sender: user.name,
+            email: user.email,
+            lat: location.lat(),
+            lng: location.lng(),
+            hazardType: reportHazardType.value,
+            hazardDescription: reportHazardDescription.value,
+            upvote: 0,
+            downvote: 0
+        })
+        .then(function (docRef) {
+            console.log("Document written with ID: ", docRef.id);
+        })
+        .catch(function (error) {
+            console.lerror("Error adding document: ", error);
+        });
 }
 
-function addMarkerToMap(info, map) {
+function addMarkerToMap(docID, info, map) {
     var marker = new google.maps.Marker({
         position: {
             lat: info.lat,
@@ -205,7 +215,7 @@ function addMarkerToMap(info, map) {
         var content = '<div id="iw-container">' +
             '<div class="iw-title">' +
             '<div><p>' + info.hazardType + '</p></div>' +
-            '<img class="sign" src="images/'+ info.hazardType + '.png">' +
+            '<img class="sign" src="images/' + info.hazardType + '.png">' +
             '</div>' +
             '<div class="iw-content">' +
             '<div class="iw-subTitle">' + info.hazardType + '</div>' +
@@ -213,58 +223,30 @@ function addMarkerToMap(info, map) {
             '</div>' +
             '</div>' +
             '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
-            '<img class="sign" src="images/upvote.png" onclick="upvotefun(' + marker.id + ');">' +
-            '<p id="upvote" style="font-size: 20px; padding-left:10px;"> ' + info.upvote + '</p>' +
-            '<img class="sign" src="images/downvote.png" onclick="downvotefun(' + marker.id + ');">' +
-            '<p id="downvote" style="font-size: 20px;  padding-left:10px;">' + info.downvote + '</p>' +
+            '<img class="sign" src="images/upvote.png" onclick="upvoteHazard();">' +
+            '<p id="upvote' + docID + '" style="font-size: 20px; padding-left:10px;"> ' + info.upvote + '</p>' +
+            '<img class="sign" src="images/downvote.png" onclick="downvoteHazard();">' +
+            '<p id="downvote' + docID + '" style="font-size: 20px;  padding-left:10px;">' + info.downvote + '</p>' +
             '</div>';
-        content +=
-            '<div class="modal-footer" style="display:flex ; justify-content: space-around;" >' +
-            "<button type = 'button' class='btn btn-secondary' style='text-align:center;' value = 'Delete' onclick = 'DeleteMarker(" +
-            marker.id +
-            ");'>Delete</button>" +
-            '</div>';
+        
+        // display 'Delete' button only if you are the user that created this hazard
+        if (info.email == user.email) {
+            content +=
+                '<div class="modal-footer" style="display:flex ; justify-content: space-around;">' +
+                '<button type="button" class="btn btn-secondary" style="text-align:center;" value="Delete" onclick="deleteHazard(' +
+                marker.id + ');">Delete</button>' +
+                '</div>';
+        }
 
         var InfoWindow = new google.maps.InfoWindow({
             content: content,
             minWidth: 400
         });
         InfoWindow.open(map, marker);
-
+        refID = docID;
     });
+
 }
-
-/**
- * Find and remove the hazard from the map.
- * @param {number} id to delete
- */
-function DeleteMarker(id) {
-    //Find and remove the marker from the Array
-    for (var i = 0; i < markers.length; i++) {
-        if (markers[i].id == id) {
-            //Remove the marker from Map                 
-            markers[i].setMap(null);
-            selectedlat = markers[i].getPosition().lat();
-
-            db.collection("hazards").where("lat", "==", selectedlat)
-                .get()
-                .then(function (querySnapshot) {
-                    querySnapshot.forEach(function (doc) {
-
-                        db.collection("hazards").doc(doc.id).update({
-                            marker: false
-                        });
-
-                    });
-                })
-
-            //Remove the marker from array.
-            markers.splice(i, 1);
-
-            return;
-        }
-    }
-};
 
 /**
  * Initialize user to landing page.
@@ -291,72 +273,63 @@ function initUser() {
 
 /**
  * 'Report' button is clicked.
+ * This will fulfill a conditional to allow the user to click on the map
+ * to report a hazard at their clicked position.
  */
 function reportButtonClicked() {
     isReportButtonClicked = true;
-
-    // TRYING: SWITCH BUTTON PURPOSE ('Report'/'Cancel Report')
-
-    // console.log("before:", isReportButtonClicked);
-    // isReportButtonClicked = !isReportButtonClicked; // true becomes false, false becomes true;
-    // console.log("after:", isReportButtonClicked);
-    // if (isReportButtonClicked) {
-    //     document.getElementById("report-btn").innerHTML = "Cancel Report";
-    // } else {
-    //     document.getElementById("report-btn").innerHTML = "Report";
-    // }
 }
 
 /**
  * Upvote a hazard.
+ * This happens when the 'upvote' sign on a hazard info window is clicked.
  */
-function upvotefun(id) {
-    for (var i = 0; i < markers.length; i++) {
-        if (markers[i].id == id) {
-            //Remove the marker from Map                          
-            selectedlat = markers[i].getPosition().lat();
+function upvoteHazard() {
+    firebase.auth().onAuthStateChanged(function () {
+        var incByOne = firebase.firestore.FieldValue.increment(1);
 
-            db.collection("hazards").where("lat", "==", selectedlat)
-                .get()
-                .then(function (querySnapshot) {
-                    querySnapshot.forEach(function (doc) {
-                        markerup = doc.data().upvote;
-                        markerup++;
-                        db.collection("hazards").doc(doc.id).update({
-                            upvote: markerup,
-                        });
-                        document.getElementById("upvote").innerHTML = doc.data().upvote;
-                    });
-                })
-
-            console.log(markerup);
-
-        };
-    }
+        db.collection("hazards").doc(refID).update({
+            upvote: incByOne
+        })
+    });
+    var upvoteNum = parseInt(document.getElementById("upvote" + refID).innerHTML);
+    upvoteNum++;
+    document.getElementById("upvote" + refID).innerHTML = upvoteNum;
 }
+
 /**
- * Downvote a hazard.
+ * Downvote a hazard
+ * This happens when the 'downvote' sign on a hazard info window is clicked.
  */
-function downvotefun(id) {
+function downvoteHazard() {
+    firebase.auth().onAuthStateChanged(function () {
+        var incByOne = firebase.firestore.FieldValue.increment(1);
+
+        db.collection("hazards").doc(refID).update({
+            downvote: incByOne
+        })
+    });
+    var downvoteNum = parseInt(document.getElementById("downvote" + refID).innerHTML);
+    downvoteNum++;
+    document.getElementById("downvote" + refID).innerHTML = downvoteNum;
+}
+
+/**
+ * Find and remove the hazard from the map.
+ * @param {number} id   marker to delete
+ */
+function deleteHazard(id) {
+    db.collection("hazards").doc(refID).delete().then(function () {
+        console.log("Document successfully deleted!");
+    }).catch(function (error) {
+        console.error("Error removing document: ", error);
+    });
+
+    // remove the marker from map
     for (var i = 0; i < markers.length; i++) {
         if (markers[i].id == id) {
-            //Remove the marker from Map                          
-            selectedlat = markers[i].getPosition().lat();
-            
-            db.collection("hazards").where("lat", "==", selectedlat)
-                .get()
-                .then(function (querySnapshot) {
-                    querySnapshot.forEach(function (doc) {
-                        markerdown = doc.data().downvote;
-                        markerdown++;
-                        db.collection("hazards").doc(doc.id).update({
-                            downvote: markerdown,
-                        });
-                        document.getElementById("downvote").innerHTML = doc.data().downvote;
-                    });
-                })
-
-           
+            markers[i].setMap(null);
+            markers.splice(i, 1);
         }
     }
 }
