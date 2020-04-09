@@ -15,9 +15,12 @@ var customStyle = [{
 var markers = [];
 var uniqueId = 1;
 var refId;
-// information to collect from 'Report Hazard' info window
+// information to collect from 'Report Hazard' modal form
 var reportHazardType = document.getElementById("hazardType");
 var reportHazardDescription = document.getElementById("hazardDescription");
+
+// allows only one info window to be open at a time
+var activeInfoWindow;
 
 // initialized user from login
 var user = {
@@ -204,26 +207,44 @@ function addMarkerToMap(docID, info, map) {
 
 
     google.maps.event.addListener(marker, "click", function (e) {
+        openInfoWindow(docID, marker, map);
+    });
 
+}
+
+/**
+ * create and open a google maps info window to show hazard information
+ * @param {string} docID document id of hazard from db
+ * @param {object} marker google maps marker to open
+ * @param {object} map the map
+ */
+function openInfoWindow(docID, marker, map) {
+    if (activeInfoWindow) { activeInfoWindow.close();}
+
+    var docRef = db.collection("hazards").doc(docID);
+
+    docRef.get().then(function (doc) {
         var content = '<div id="iw-container">' +
             '<div class="iw-title">' +
-            '<div><p>' + info.hazardType + '</p></div>' +
-            '<img class="sign" src="images/' + info.hazardType + '.png">' +
+            '<div><p>' + doc.data().hazardType + '</p></div>' +
+            '<img class="sign" src="images/' + doc.data().hazardType + '.png">' +
             '</div>' +
             '<div class="iw-content">' +
-            '<div class="iw-subTitle">' + info.hazardType + '</div>' +
-            '<p>' + info.hazardDescription + '</p>' +
+            '<div class="iw-subTitle">' + doc.data().hazardType + '</div>' +
+            '<p>' + doc.data().hazardDescription + '</p>' +
             '</div>' +
             '</div>' +
             '<div class="modal-footer" style="display: flex; justify-content: space-around;">' +
+            // '<img id="upvoteSign' + docID + '" class="sign" src="images/upvote.png">' +
             '<img class="sign" src="images/upvote.png" onclick="upvoteHazard();">' +
-            '<p id="upvote' + docID + '" style="font-size: 20px;  padding-right:10px;"> ' + info.upvote + '</p>' +
+            '<p id="upvote' + docID + '" style="font-size: 20px;  padding-right:10px;"> ' + doc.data().upvote + '</p>' +
+            // '<img id="downvoteSign' + docID + '" class="sign" src="images/downvote.png">' +
             '<img class="sign" src="images/downvote.png" onclick="downvoteHazard();">' +
-            '<p id="downvote' + docID + '" style="font-size: 20px;">' + info.downvote + '</p>' +
+            '<p id="downvote' + docID + '" style="font-size: 20px;">' + doc.data().downvote + '</p>' +
             '</div>';
         
         // display 'Delete' button only if you are the user that created this hazard
-        if (info.email == user.email) {
+        if (doc.data().email == user.email) {
             content +=
                 '<div class="modal-footer" style="display:flex ; justify-content: space-around;">' +
                 '<button type="button" class="btn btn-secondary" style="text-align:center;" onclick="deleteHazard(' +
@@ -231,14 +252,19 @@ function addMarkerToMap(docID, info, map) {
                 '</div>';
         }
 
-        var InfoWindow = new google.maps.InfoWindow({
+        var infoWindow = new google.maps.InfoWindow({
             content: content,
             minWidth: 400
         });
-        InfoWindow.open(map, marker);
-        refId = docID;
-    });
 
+        infoWindow.open(map, marker);
+
+        refId = docID;
+        activeInfoWindow = infoWindow;
+
+    }). catch(function (error) {
+        console.log("Error getting document:", error);
+    })
 }
 
 /**
