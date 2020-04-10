@@ -230,15 +230,12 @@ function openInfoWindow(docID, marker, map) {
             '<img class="sign" src="images/' + doc.data().hazardType + '.png">' +
             '</div>' +
             '<div class="iw-content">' +
-            '<div class="iw-subTitle">' + doc.data().hazardType + '</div>' +
             '<p>' + doc.data().hazardDescription + '</p>' +
             '</div>' +
             '</div>' +
             '<div class="modal-footer" style="display: flex; justify-content: space-around;">' +
-            // '<img id="upvoteSign' + docID + '" class="sign" src="images/upvote.png">' +
             '<img class="sign" src="images/upvote.png" onclick="upvoteHazard();">' +
             '<p id="upvote' + docID + '" style="font-size: 20px;  padding-right:10px;"> ' + doc.data().upvote + '</p>' +
-            // '<img id="downvoteSign' + docID + '" class="sign" src="images/downvote.png">' +
             '<img class="sign" src="images/downvote.png" onclick="downvoteHazard();">' +
             '<p id="downvote' + docID + '" style="font-size: 20px;">' + doc.data().downvote + '</p>' +
             '</div>';
